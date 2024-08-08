@@ -13,7 +13,7 @@ class OvertimeController extends Controller
     public function index()
     {
         try {
-            # code...
+            return view('page.overtime.index');
         } catch (\Throwable $e) {
             # code...
         }
@@ -82,12 +82,14 @@ class OvertimeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Overtime $overtime)
+    public function destroy($overtime)
     {
         try {
-            # code...
+            $overtime = Overtime::firstWhere('uuid', $overtime);
+            $overtime->delete();
+            return response()->json(['status' => 'success', 'msg' => 'Success Delete Overtime'], 200);
         } catch (\Throwable $e) {
-            # code...
+            return response()->json(['status' => 'error', 'msg' => 'Success Delete Overtime', 'err' => $e->getMessage()], 500);
         }
     }
 }

@@ -41,6 +41,8 @@ Route::middleware(['web','auth'])->group(function(){
     Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     
     Route::resource('clients', ClientController::class);
+    Route::get('clients-table', [ClientController::class ,'tableDataAdmin'])->name('clients.table');
+
 
 
     Route::resource('contracts', ContractController::class);

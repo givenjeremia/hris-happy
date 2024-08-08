@@ -13,7 +13,7 @@ class VacationController extends Controller
     public function index()
     {
         try {
-            # code...
+            return view('page.vacation.index');
         } catch (\Throwable $e) {
             # code...
         }
@@ -82,12 +82,14 @@ class VacationController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Vacation $vacation)
+    public function destroy($vacation)
     {
         try {
-            # code...
+            $vacation = Vacation::firstWhere('uuid', $vacation);
+            $vacation->delete();
+            return response()->json(['status' => 'success', 'msg' => 'Success Delete Vacation'], 200);
         } catch (\Throwable $e) {
-            # code...
+            return response()->json(['status' => 'error', 'msg' => 'Success Delete Vacation', 'err' => $e->getMessage()], 500);
         }
     }
 }

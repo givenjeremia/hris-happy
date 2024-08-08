@@ -13,7 +13,7 @@ class ContractController extends Controller
     public function index()
     {
         try {
-            # code...
+            return view('page.contract.index');
         } catch (\Throwable $e) {
             # code...
         }
@@ -25,7 +25,7 @@ class ContractController extends Controller
     public function create()
     {
         try {
-            # code...
+            return view('page.contract.create');
         } catch (\Throwable $e) {
             # code...
         }
@@ -58,10 +58,11 @@ class ContractController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Contract $contract)
+    public function edit($contract)
     {
         try {
-            # code...
+            $contract = Contract::firstWhere('uuid',$contract);
+            return view('page.contract.update',compact('contract'));
         } catch (\Throwable $e) {
             # code...
         }
@@ -82,12 +83,14 @@ class ContractController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Contract $contract)
+    public function destroy($contract)
     {
         try {
-            # code...
+            $contract = Contract::firstWhere('uuid', $contract);
+            $contract->delete();
+            return response()->json(['status' => 'success', 'msg' => 'Success Delete Contract'], 200);
         } catch (\Throwable $e) {
-            # code...
+            return response()->json(['status' => 'error', 'msg' => 'Success Delete Contract', 'err' => $e->getMessage()], 500);
         }
     }
 }

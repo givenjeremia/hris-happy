@@ -13,7 +13,7 @@ class EmployeeController extends Controller
     public function index()
     {
         try {
-            # code...
+            return view('page.employee.index');
         } catch (\Throwable $e) {
             # code...
         }
@@ -82,12 +82,14 @@ class EmployeeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Employee $employee)
+    public function destroy($employee)
     {
         try {
-            # code...
+            $employee = Employee::firstWhere('uuid', $employee);
+            $employee->delete();
+            return response()->json(['status' => 'success', 'msg' => 'Success Delete Employee'], 200);
         } catch (\Throwable $e) {
-            # code...
+            return response()->json(['status' => 'error', 'msg' => 'Success Delete Employee', 'err' => $e->getMessage()], 500);
         }
     }
 }

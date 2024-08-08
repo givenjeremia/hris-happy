@@ -54,10 +54,10 @@
 <body class="hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
         <!-- Preloader -->
-        <div class="preloader flex-column justify-content-center align-items-center">
-            <img class="animation__shake" src="{{ asset('brand/logo/titik_koma.png') }}" alt="Titik Koma Logo" height="60"
+        {{-- <div class="preloader flex-column justify-content-center align-items-center">
+            <img class="animation__shake" src="#" alt="Titik Koma Logo" height="60"
                 width="60">
-        </div>
+        </div> --}}
 
         <!-- Navbar -->
         @include('components.navbar')

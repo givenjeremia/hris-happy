@@ -13,7 +13,7 @@ class PosisionController extends Controller
     public function index()
     {
         try {
-            # code...
+            return view('page.posision.index');
         } catch (\Throwable $e) {
             # code...
         }
@@ -82,12 +82,14 @@ class PosisionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Posision $posision)
+    public function destroy($posision)
     {
         try {
-            # code...
+            $posision = Posision::firstWhere('uuid', $posision);
+            $posision->delete();
+            return response()->json(['status' => 'success', 'msg' => 'Success Delete Posision'], 200);
         } catch (\Throwable $e) {
-            # code...
+            return response()->json(['status' => 'error', 'msg' => 'Success Delete Posision', 'err' => $e->getMessage()], 500);
         }
     }
 }

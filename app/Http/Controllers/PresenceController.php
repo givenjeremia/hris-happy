@@ -13,7 +13,7 @@ class PresenceController extends Controller
     public function index()
     {
         try {
-            # code...
+            return view('page.presence.index');
         } catch (\Throwable $e) {
             # code...
         }
@@ -82,12 +82,14 @@ class PresenceController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Presence $presence)
+    public function destroy($presence)
     {
         try {
-            # code...
+            $presence = Presence::firstWhere('uuid', $presence);
+            $presence->delete();
+            return response()->json(['status' => 'success', 'msg' => 'Success Delete Presence'], 200);
         } catch (\Throwable $e) {
-            # code...
+            return response()->json(['status' => 'error', 'msg' => 'Success Delete Presence', 'err' => $e->getMessage()], 500);
         }
     }
 }

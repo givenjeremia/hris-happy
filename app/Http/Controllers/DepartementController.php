@@ -13,7 +13,7 @@ class DepartementController extends Controller
     public function index()
     {
         try {
-            # code...
+            return view('page.departement.index');
         } catch (\Throwable $e) {
             # code...
         }
@@ -82,12 +82,14 @@ class DepartementController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Departement $departement)
+    public function destroy($departement)
     {
         try {
-            # code...
+            $departement = Departement::firstWhere('uuid', $departement);
+            $departement->delete();
+            return response()->json(['status' => 'success', 'msg' => 'Success Delete Departement'], 200);
         } catch (\Throwable $e) {
-            # code...
+            return response()->json(['status' => 'error', 'msg' => 'Success Delete Departement', 'err' => $e->getMessage()], 500);
         }
     }
 }

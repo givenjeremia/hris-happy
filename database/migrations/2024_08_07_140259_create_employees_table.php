@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('employees', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique();
-            $table->foreignId('posision_id')->nullable()->constrained('posisions');
+            $table->foreignId('posision_id')->nullable()->constrained('positions');
             $table->text('nik');
             $table->text('full_name');
             $table->date('date_of_birth');

@@ -46,18 +46,27 @@ Route::middleware(['web','auth'])->group(function(){
 
 
     Route::resource('contracts', ContractController::class);
+    Route::get('contracts-table', [ContractController::class ,'tableDataAdmin'])->name('contracts.table');
+
 
 
     Route::resource('departements', DepartementController::class);
+    Route::get('departements-table', [DepartementController::class ,'tableDataAdmin'])->name('departements.table');
+
+    Route::resource('posisions', PosisionController::class);
+    Route::get('posisions-table', [PosisionController::class ,'tableDataAdmin'])->name('posisions.table');
+
 
 
     Route::resource('employee', EmployeeController::class);
+    Route::get('employee-table', [EmployeeController::class ,'tableDataAdmin'])->name('employee.table');
+
 
 
     Route::resource('overtimes', OvertimeController::class);
 
 
-    Route::resource('posisions', PosisionController::class);
+
 
 
     Route::resource('presences', PresenceController::class);

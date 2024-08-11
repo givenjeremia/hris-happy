@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Create Departement</h4>
+                <h4 class="modal-title">Create Posision</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -11,8 +11,20 @@
                 <form id="FormCreate">
                     @csrf
                     <div class="form-group required ">
+                        <label for="exampleInputEmail1" class="control-label">Departement</label>
+                        <select name="departement" class="form-control" id="">
+                            @foreach ($departements as $item)
+                                <option value="{{ $item->uuid }}">{{ $item->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group required ">
                         <label for="exampleInputEmail1" class="control-label">Name</label>
                         <input type="text" name="name" class="form-control" id="exampleInputEmail1" placeholder="Write Data">
+                    </div>
+                    <div class="form-group required ">
+                        <label for="exampleInputEmail1" class="control-label">Salary</label>
+                        <input type="text" name="salary" class="form-control" id="exampleInputEmail1" placeholder="Write Data">
                     </div>
                 </form>
             </div>
@@ -34,7 +46,7 @@
        $('#btn-simpan').click(function(e) {
         e.preventDefault();
         Swal.fire({
-            title: "Create Departement",
+            title: "Create Posision",
             text: "Are you sure?"
             , icon: 'warning'
             , target: document.getElementById('content')
@@ -44,7 +56,7 @@
             , cancelButtonText: 'Cancel'
         }).then((result) => {
             if (result.isConfirmed) {
-                let act = '{{ route("departements.store") }}'
+                let act = '{{ route("posisions.store") }}'
                 let form_data = new FormData(document.querySelector("#FormCreate"));
                 form_data.append('_token', '{{ csrf_token() }}')
                 $.ajax({

@@ -58,6 +58,24 @@
                 </li>
 
                 <li class="nav-item">
+                    <a href="{{ route('posisions.index') }}" class="nav-link {{ request()->routeIs('posisions.index') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                        <p>
+                            Posision
+                        </p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="{{ route('employee.index') }}" class="nav-link {{ request()->routeIs('employee.index') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                        <p>
+                            Employee
+                        </p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
                     <a href="{{ route('overtimes.index') }}" class="nav-link {{ request()->routeIs('overtimes.index') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>
@@ -67,14 +85,7 @@
                 </li>
 
 
-                <li class="nav-item">
-                    <a href="{{ route('posisions.index') }}" class="nav-link {{ request()->routeIs('posisions.index') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-tachometer-alt"></i>
-                        <p>
-                            Posision
-                        </p>
-                    </a>
-                </li>
+               
 
                 <li class="nav-item">
                     <a href="{{ route('presences.index') }}" class="nav-link {{ request()->routeIs('presences.index') ? 'active' : '' }}">

@@ -11,15 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('contracts', function (Blueprint $table) {
-            $table->id();
-            $table->uuid('uuid')->unique();
+        Schema::table('employees', function (Blueprint $table) {
             $table->foreignId('client_id')->nullable()->constrained('clients');
-            $table->date('start_date');
-            $table->date('end_date');
-            $table->text('description')->nullable();
-            $table->timestamps();
-            $table->softDeletes();
         });
     }
 
@@ -28,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('contracts');
+        Schema::table('employees', function (Blueprint $table) {
+            //
+        });
     }
 };

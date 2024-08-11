@@ -11,6 +11,7 @@ class Posision extends Model
 {
     use HasFactory;
     use SoftDeletes;
+    protected $table = 'positions';
 
     protected $fillable = [
         'departement_id',

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Stevebauman\Location\Facades\Location;
 
 class HomeController extends Controller
 {
@@ -23,6 +24,11 @@ class HomeController extends Controller
      */
     public function index()
     {
+        // $ip = request()->ip();
+        // // $ip = '103.226.226.86';
+        // // dd($ip);
+        // $data = Location::get($ip);  
+        // dd($data);    
         return view('page.dashboard.index');
     }
 }

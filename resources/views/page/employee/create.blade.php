@@ -25,7 +25,7 @@
 
                 <div class="form-group required">
                     <label for="exampleInputEmail1" class="control-label">Posision</label>
-                    <select name="client" class="form-control">
+                    <select name="posision" class="form-control">
                         @foreach ($posisions as $item)
                             <option value="{{ $item->uuid }}">{{ $item->name }}</option>
                         @endforeach
@@ -51,7 +51,13 @@
 
                 <div class="form-group required">
                     <label for="exampleInputEmail1" class="control-label">Address</label>
-                    <textarea name="description" class="form-control"></textarea>
+                    <textarea name="address" class="form-control"></textarea>
+                </div>
+
+                <div class="form-group required">
+                    <label for="exampleInputEmail1" class="control-label">Email</label>
+                    <input type="text" name="email" class="form-control" id="exampleInputEmail1"
+                        placeholder="Write Data">
                 </div>
 
                 <div class="form-group required">
@@ -122,7 +128,7 @@
                                     icon: 'success'
                                 }).then(function(result) {
                                     window.location.href =
-                                        "{{ route('contracts.index') }}"
+                                        "{{ route('employee.index') }}"
                                 });
 
                             } else {

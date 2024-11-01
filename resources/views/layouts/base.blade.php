@@ -49,9 +49,13 @@
             color:red;
         }
     </style>
+
+
+    @yield('styles')
+
 </head>
 
-<body class="hold-transition sidebar-mini layout-fixed">
+<body class="layout-top-nav layout-navbar-fixed" style="height: auto;">
     <div class="wrapper">
         <!-- Preloader -->
         {{-- <div class="preloader flex-column justify-content-center align-items-center">
@@ -60,14 +64,16 @@
         </div> --}}
 
         <!-- Navbar -->
-        @include('components.navbar')
+        {{-- @include('components.navbar') --}}
+        @include('components.topnav')
+
         <!-- /.navbar -->
 
         <!-- Main Sidebar Container -->
-        @include('components.sidebar')
+        {{-- @include('components.sidebar') --}}
 
         <!-- Content Wrapper. Contains page content -->
-        <div class="content-wrapper">
+        <div class="content-wrapper" style="min-height: 856px;">
             <!-- Content Header (Page header) -->
             @yield('toolbar')
             <!-- /.content-header -->
@@ -127,7 +133,7 @@
 
     
     <!-- AdminLTE for demo purposes -->
-    <script src="{{ asset('assets_lte/dist/js/demo.js') }}"></script>
+    {{-- <script src="{{ asset('assets_lte/dist/js/demo.js') }}"></script> --}}
     <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
     <script src="{{ asset('assets_lte/dist/js/pages/dashboard.js') }}"></script>
 
@@ -160,7 +166,6 @@
             theme: 'bootstrap4'
         })
     </script>
-
     <script>
         $(document).ready(function() {
             $('#logout').click(function() {
@@ -177,18 +182,22 @@
                         $.ajax({
                             url: "{{ route('logout') }}",
                             type: "POST",
-                            data: {
-                                _token: "{{ csrf_token() }}"
+                            headers: {
+                                'X-CSRF-TOKEN': "{{ csrf_token() }}"
                             },
-                            success: function(data) {
-                                window.location.href = "/login";
+                            success: function() {
+                                window.location.reload();
+                            },
+                            error: function(xhr, status, error) {
+                                window.location.reload();
                             }
                         });
                     }
-                })
+                });
             });
         });
     </script>
+
 
     @yield('scripts')
 </body>

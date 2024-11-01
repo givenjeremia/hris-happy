@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Client;
 use App\Models\Employee;
 use App\Models\Posision;
 use Illuminate\Http\Request;
+use App\Mail\NewEmployeeMail;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 
@@ -62,17 +66,12 @@ class EmployeeController extends Controller
                 ->addColumn('Action', function ($item)  {
                     $encryptedIdString = "'" . strval($item->uuid) . "'";
                     $url = '';
-                    if ($item->getMedia('document')->first() ){
-                        $url = $item->getMedia('document')->first()->getUrl();
-                        $url = $this->convertUrlMedia($url);
-                    }
                     $button = 
                     '
                     <div class="dropdown">
                         <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
                             class="btn btn-secondary w-100">Action</a>
                         <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow" style="left: 0px; right: inherit;">
-                            <li><a href="'.$url.'" class="dropdown-item" target="_blank">Lihat Dokumen</a></li>
                             <li><a href="'.route('contracts.edit',$item->uuid).'" class="dropdown-item">Ubah</a></li>
                             <li><a href="#" onclick="deleteData(' . $encryptedIdString . ')"  class="dropdown-item">Hapus</a></li>
                         </ul>
@@ -104,10 +103,64 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
+        DB::beginTransaction();
         try {
-            # code...
+            $validator = Validator::make($request->all(), [
+                'posision' => 'required',
+                'client' => 'required',
+                'nik' => 'required',
+                'full_name' =>  'required',
+                'date_of_birth' => 'required',
+                'address' => 'required',
+                'bank_account_name' => 'required',
+                'bank_account_number' => 'required',
+                'phone_number' => 'required',
+                'code_ptkp' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return response()->json(array('status' => 'error','msg' => 'Failed Create Employee','err'=>'Check Input','valid'=>$validator->errors()), 400);
+            }
+            else{
+                // Generate Password
+                $random_password =  User::generateUniqueString();
+
+                // Add IN USER
+                $user = new User();
+                $user->name = $request->get('full_name');
+                $user->email = $request->get('email');
+                $user->password = bcrypt($random_password);
+                $user->save();
+
+                // Add Profile Employee
+                $posision =  Posision::firstWhere('uuid',$request->get('posision'));
+                $client =  Client::firstWhere('uuid',$request->get('client'));
+
+                $employee = Employee::create($request->except('_token', '_method'));
+                $employee->posision_id = $posision->id;
+                $employee->client_id = $client->id;
+                $employee->user_id = $user->id;
+                $employee->save();
+
+                // Set Role
+                $user->assignRole('employee');
+
+                // Send Email
+                $data_email =[
+                    'password' => $random_password,
+                    'email' => $user->email,
+                    'nama' => $user->name,
+                    'date' => $employee->created_at,
+                ];
+                Mail::to($user->email)->send(new NewEmployeeMail($data_email));
+
+
+                DB::commit();
+                return response()->json(array('status' => 'success','msg' => 'Success Create Employee'), 201);
+
+            }
         } catch (\Throwable $e) {
-            # code...
+            DB::rollBack();
+            return response()->json(array('status' => 'error','msg' => 'Failed Create Employee','err'=>$e->getMessage()), 500);
         }
     }
 

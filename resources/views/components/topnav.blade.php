@@ -42,6 +42,18 @@
 
               <li><a href="{{ route('vacations.index') }}" class="dropdown-item  {{ request()->routeIs('vacations.index') ? 'active' : '' }}">Vacation</a></li>
 
+              <li><a href="#" class="dropdown-item">Salary Calculation</a></li>
+
+
+            </ul>
+          </li>
+
+          <li class="nav-item dropdown">
+            <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle">Jadwal</a>
+            <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow" style="left: 0px; right: inherit;">
+
+              <li><a href="#" class="dropdown-item">Data</a></li>
+
             </ul>
           </li>
 

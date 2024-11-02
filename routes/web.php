@@ -17,6 +17,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\OvertimeController;
 use App\Http\Controllers\PosisionController;
 use App\Http\Controllers\PresenceController;
+use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\VacationController;
 use App\Http\Controllers\DepartementController;
 
@@ -66,23 +67,24 @@ Route::middleware(['web','auth'])->group(function(){
 
     Route::prefix('personnel')->group(function () {
         
-            Route::resource('employee', EmployeeController::class);
-            Route::get('employee-table', [EmployeeController::class ,'tableDataAdmin'])->name('employee.table');
+        Route::resource('employee', EmployeeController::class);
+        Route::get('employee-table', [EmployeeController::class ,'tableDataAdmin'])->name('employee.table');
         
         
         
-            Route::resource('overtimes', OvertimeController::class);
+        Route::resource('overtimes', OvertimeController::class);
         
+        Route::resource('presences', PresenceController::class);
         
+        Route::resource('vacations', VacationController::class);
         
-        
-        
-            Route::resource('presences', PresenceController::class);
-        
-            Route::resource('vacations', VacationController::class);
-        
-            Route::resource('shifts', ShiftController::class);
+        Route::resource('shifts', ShiftController::class);
+        Route::get('shifts-table', [ShiftController::class ,'tableDataAdmin'])->name('shifts.table');
+
+        // Schedule 
        
+        Route::resource('schedules', ScheduleController::class);
+
 
     });
     

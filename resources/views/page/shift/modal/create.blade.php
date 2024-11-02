@@ -16,12 +16,12 @@
                     </div>
                     <div class="form-group required ">
                         <label for="exampleInputEmail1" class="control-label">Time In</label>
-                        <input type="text" name="time_in" class="form-control" id="exampleInputEmail1" placeholder="Write Data">
+                        <input type="time" name="time_in" class="form-control" id="exampleInputEmail1" placeholder="Write Data">
                     </div>
 
                     <div class="form-group required ">
                         <label for="exampleInputEmail1" class="control-label">Time Out</label>
-                        <input type="text" name="time_out" class="form-control" id="exampleInputEmail1" placeholder="Write Data">
+                        <input type="time" name="time_out" class="form-control" id="exampleInputEmail1" placeholder="Write Data">
                     </div>
 
                 </form>
@@ -44,7 +44,7 @@
        $('#btn-simpan').click(function(e) {
         e.preventDefault();
         Swal.fire({
-            title: "Create Posision",
+            title: "Create Shift",
             text: "Are you sure?"
             , icon: 'warning'
             , target: document.getElementById('content')

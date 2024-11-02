@@ -1,6 +1,7 @@
 <nav class="main-header navbar navbar-expand-md navbar-light navbar-white">
     <div class="container-fluid">
       <a href="/" class="navbar-brand">
+        <img src="{{ asset('assets/icon/resource.png') }}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
         <span class="brand-text font-weight-light">HRIS Sistem</span>
       </a>
 
@@ -15,34 +16,47 @@
             <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}">Dashboard</a>
           </li>
 
-          <li class="nav-item dropdown">
-            <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle">Master Data</a>
-            <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow" style="left: 0px; right: inherit;">
+          @if (auth()->user()->hasRole('admin'))
 
-              <li><a href="{{ route('clients.index') }}" class="dropdown-item {{ request()->routeIs('clients.index') ? 'active' : '' }}">Client</a></li>
+            <li class="nav-item dropdown">
+              <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle">Master Data</a>
+              <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow" style="left: 0px; right: inherit;">
 
-              <li><a href="{{ route('contracts.index') }}" class="dropdown-item {{ request()->routeIs('contracts.index') ? 'active' : '' }}">Contract</a></li>
+                <li><a href="{{ route('clients.index') }}" class="dropdown-item {{ request()->routeIs('clients.index') ? 'active' : '' }}">Client</a></li>
 
-              <li><a href="{{ route('departements.index') }}" class="dropdown-item {{ request()->routeIs('departements.index') ? 'active' : '' }}">Departement</a></li>
+                <li><a href="{{ route('contracts.index') }}" class="dropdown-item {{ request()->routeIs('contracts.index') ? 'active' : '' }}">Contract</a></li>
 
-              <li><a href="{{ route('posisions.index') }}" class="dropdown-item {{ request()->routeIs('posisions.index') ? 'active' : '' }}">Posision</a></li>
+                <li><a href="{{ route('departements.index') }}" class="dropdown-item {{ request()->routeIs('departements.index') ? 'active' : '' }}">Departement</a></li>
 
-            </ul>
-          </li>
+                <li><a href="{{ route('posisions.index') }}" class="dropdown-item {{ request()->routeIs('posisions.index') ? 'active' : '' }}">Posision</a></li>
+
+                <li><a href="{{ route('shifts.index') }}" class="dropdown-item {{ request()->routeIs('shifts.index') ? 'active' : '' }}">Shift</a></li>
+
+                
+
+              </ul>
+            </li>
+
+          @endif
 
           <li class="nav-item dropdown">
             <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle">Personnel</a>
             <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow" style="left: 0px; right: inherit;">
 
-              <li><a href="{{ route('employee.index') }}" class="dropdown-item {{ request()->routeIs('employee.index') ? 'active' : '' }}">Data</a></li>
+              @if (auth()->user()->hasRole('admin'))
+              
+                <li><a href="{{ route('employee.index') }}" class="dropdown-item {{ request()->routeIs('employee.index') ? 'active' : '' }}">Data</a></li>
+
+                <li><a href="#" class="dropdown-item">Salary Calculation</a></li>
+
+              @endif
+              
 
               <li><a href="{{ route('overtimes.index') }}" class="dropdown-item {{ request()->routeIs('overtimes.index') ? 'active' : '' }}">Overtimes</a></li>
 
               <li><a href="{{ route('presences.index') }}" class="dropdown-item {{ request()->routeIs('presences.index') ? 'active' : '' }}">Presences</a></li>
 
               <li><a href="{{ route('vacations.index') }}" class="dropdown-item  {{ request()->routeIs('vacations.index') ? 'active' : '' }}">Vacation</a></li>
-
-              <li><a href="#" class="dropdown-item">Salary Calculation</a></li>
 
 
             </ul>

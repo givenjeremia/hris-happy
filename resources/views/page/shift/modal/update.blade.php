@@ -15,10 +15,17 @@
                         <label for="exampleInputEmail1" class="control-label">Name</label>
                         <input type="text" name="name" value="{{ $shift->name }}" class="form-control" id="exampleInputEmail1" placeholder="Write Data">
                     </div>
+
                     <div class="form-group required ">
                         <label for="exampleInputEmail1" class="control-label">Time In</label>
-                        <input type="text" name="salary" value="{{ $posision->salary }}" class="form-control" id="exampleInputEmail1" placeholder="Write Data">
+                        <input type="time" name="time_in" value="{{ $shift->time_in }}" class="form-control" id="exampleInputEmail1" placeholder="Write Data">
                     </div>
+
+                    <div class="form-group required ">
+                        <label for="exampleInputEmail1" class="control-label">Time Out</label>
+                        <input type="time" name="time_out" value="{{ $shift->time_out }}" class="form-control" id="exampleInputEmail1" placeholder="Write Data">
+                    </div>
+
                 </form>
             </div>
             <div class="modal-footer justify-content-between">
@@ -49,7 +56,7 @@
             , cancelButtonText: 'Cancel'
         }).then((result) => {
             if (result.isConfirmed) {
-                let act = '{{ route("posisions.update", ":uuid") }}'.replace(':uuid','{{ $posision->uuid }}')
+                let act = '{{ route("shifts.update", ":uuid") }}'.replace(':uuid','{{ $shift->uuid }}')
                 let form_data = new FormData(document.querySelector("#FormUpdate"));
                 form_data.append('_token', '{{ csrf_token() }}')
                 $.ajax({

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Schedule;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Validator;
 
 class ScheduleController extends Controller
 {
@@ -12,7 +14,11 @@ class ScheduleController extends Controller
      */
     public function index()
     {
-        //
+        try {
+            return view('page.schedules.index');
+        } catch (\Throwable $e) {
+            # code...
+        }
     }
 
     /**
@@ -20,7 +26,11 @@ class ScheduleController extends Controller
      */
     public function create()
     {
-        //
+        try {
+            return response()->json(array('status' => 'success', 'msg' => view('page.schedules.modal.create' )->render()), 200);
+        } catch (\Throwable $th) {
+            return response()->json(array('status' => 'error', 'msg' =>$th->getMessage() ), 500);
+        }
     }
 
     /**
@@ -28,7 +38,24 @@ class ScheduleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $validator = Validator::make($request->all(), [
+                'employee' => 'required',
+                'shift' => 'required',
+                'date' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return response()->json(array('status' => 'error','msg' => 'Failed Create Schedule','err'=>'Check Input','valid'=>$validator->errors()), 400);
+            }
+            else{
+                $schedule = Schedule::create($request->except('_token', '_method'));
+                $schedule->save();
+                return response()->json(array('status' => 'success','msg' => 'Success Create Schedule'), 201);
+
+            }
+        } catch (\Throwable $e) {
+            return response()->json(array('status' => 'error','msg' => 'Failed Create Schedule','err'=>$e->getMessage()), 500);
+        }
     }
 
     /**
@@ -42,9 +69,14 @@ class ScheduleController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Schedule $schedule)
+    public function edit($schedule)
     {
-        //
+        try {
+            $schedule = Schedule::firstWhere('uuid',$schedule);
+            return response()->json(array('status' => 'success', 'msg' => view('page.schedules.modal.update',compact('schedule'))->render()), 200);
+        } catch (\Throwable $th) {
+            return response()->json(array('status' => 'error', 'msg' =>$th->getMessage() ), 500);
+        }
     }
 
     /**
@@ -62,4 +94,12 @@ class ScheduleController extends Controller
     {
         //
     }
+
+
+    public function generate(Schedule $schedule)
+    {
+        //
+    }
+
+
 }

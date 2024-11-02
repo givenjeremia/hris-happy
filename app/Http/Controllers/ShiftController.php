@@ -107,10 +107,11 @@ class ShiftController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Shift $shift)
+    public function edit($shift)
     {
         try {
-            return response()->json(array('status' => 'success', 'msg' => view('page.shift.modal.update')->render()), 200);
+            $shift = Shift::firstWhere('uuid', $shift);
+            return response()->json(array('status' => 'success', 'msg' => view('page.shift.modal.update',compact('shift'))->render()), 200);
         } catch (\Throwable $th) {
             return response()->json(array('status' => 'error', 'msg' =>$th->getMessage() ), 500);
         }

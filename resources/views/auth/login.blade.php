@@ -5,7 +5,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Login - HRIS SISTEM</title>
-    
+
+    <link rel="shortcut icon" href="{{ asset('assets/icon/resource.png') }}" />
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -28,7 +29,7 @@
                 </a>
             </div> --}}
             <div class="card-body">
-                <p class="login-box-msg">Login Hris Sistem!</p>
+                <p class="login-box-msg">Silahkan Login Aplikasi HRIS!</p>
 
                 <form id="loginForm" method="post">
                     @csrf

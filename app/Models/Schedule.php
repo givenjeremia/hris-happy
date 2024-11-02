@@ -2,10 +2,37 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Employee;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Schedule extends Model
 {
     use HasFactory;
+    use SoftDeletes;
+
+    protected $fillable = [
+        'employee',
+        'shift',
+        'date',
+        'desc',
+    ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            $model->uuid = Str::uuid(); 
+        });
+    }
+
+    public function employee()
+	{
+		return $this->belongsTo(Employee::class);
+	}
+
+
 }

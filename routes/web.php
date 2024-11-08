@@ -82,8 +82,15 @@ Route::middleware(['web','auth'])->group(function(){
         Route::get('shifts-table', [ShiftController::class ,'tableDataAdmin'])->name('shifts.table');
 
         // Schedule 
-       
-        Route::resource('schedules', ScheduleController::class);
+        Route::prefix('schedules')->name('schedules.')->group(function () {
+            Route::get('/', [ScheduleController::class, 'index'])->name('index');
+            Route::get('/create', [ScheduleController::class, 'create'])->name('create'); 
+            Route::post('/', [ScheduleController::class, 'store'])->name('store'); 
+            Route::get('/{id}/edit', [ScheduleController::class, 'edit'])->name('edit');
+            Route::put('/{id}', [ScheduleController::class, 'update'])->name('update'); 
+            Route::delete('{id}', [ScheduleController::class, 'destroy'])->name('destroy'); 
+            Route::get('schedule-table', [ScheduleController::class, 'table'])->name('table'); 
+        });
 
 
     });

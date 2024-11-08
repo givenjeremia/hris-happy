@@ -14,10 +14,7 @@ class Schedule extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'employee',
-        'shift',
-        'date',
-        'desc',
+        'uuid', 'employee_id', 'shift_id', 'date', 'desc'
     ];
 
     protected static function boot()
@@ -34,5 +31,8 @@ class Schedule extends Model
 		return $this->belongsTo(Employee::class);
 	}
 
-
+    public function shift()
+    {
+        return $this->belongsTo(Shift::class);
+    }
 }

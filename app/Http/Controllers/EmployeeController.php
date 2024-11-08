@@ -42,6 +42,10 @@ class EmployeeController extends Controller
                 ->addColumn('Full Name', function ($item) {
                     return $item->full_name;
                 })
+                ->addColumn('Posision', function ($item) {
+                    return $item->posision_id;
+                })
+
                 ->addColumn('NIK', function ($item) {
                     return $item->nik;
                 })
@@ -78,7 +82,7 @@ class EmployeeController extends Controller
                     </div>
                     ';
                     return $button;
-                })->rawColumns(['No','Client','Full Name','NIK','Date Of Birth','Address','Bank Account Name','Bank Account Number','Phone Number','Code PTKP', 'Action']);
+                })->rawColumns(['No','Client','Posision','Full Name','NIK','Date Of Birth','Address','Bank Account Name','Bank Account Number','Phone Number','Code PTKP', 'Action']);
                
             return $dataTable->make(true);
         }

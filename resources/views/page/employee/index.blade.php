@@ -54,6 +54,12 @@
                     className: 'text-nowrap'
                 },
                 {
+                    data: 'Posision',
+                    name: 'Posision',
+                    title: 'Posision',
+                    className: 'text-nowrap'
+                },
+                {
                     data: 'NIK',
                     name: 'NIK',
                     title: 'NIK',

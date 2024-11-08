@@ -25,4 +25,6 @@ class Departement extends Model
         });
     }
     
+    
+
 }

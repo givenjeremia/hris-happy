@@ -14,7 +14,7 @@ class Schedule extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'uuid', 'employee_id', 'shift_id', 'date', 'desc'
+        'employee_id', 'shift_id', 'date', 'desc'
     ];
 
     protected static function boot()

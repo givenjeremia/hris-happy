@@ -13,9 +13,8 @@
                     <div class="form-group required">
                         <label for="employee" class="control-label">Employee</label>
                         <select name="employee" id="employee" class="form-control" required>
-                            <option value="">Select Employee</option>
                             @foreach($employees as $employee)
-                                <option value="{{ $employee->id }}">{{ $employee->name }}</option>
+                                <option value="{{ $employee->uuid }}">{{ $employee->full_name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -23,9 +22,8 @@
                     <div class="form-group required">
                         <label for="shift" class="control-label">Shift</label>
                         <select name="shift" id="shift" class="form-control" required>
-                            <option value="">Select Shift</option>
                             @foreach($shifts as $shift)
-                                <option value="{{ $shift->id }}">{{ $shift->name }}</option>
+                                <option value="{{ $shift->uuid }}">{{ $shift->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -49,67 +47,75 @@
     </div>
 </div>
 
+
 <script>
     $(document).ready(function() {
-        $('#modal-create-schedule').modal('show'); // Show modal when document is ready
-
-        // Handle save button click
-        $('#btn-save-schedule').click(function(e) {
-            e.preventDefault();
-            Swal.fire({
-                title: "Create Schedule",
-                text: "Are you sure?",
-                icon: 'warning',
-                reverseButtons: true,
-                confirmButtonText: "Yes",
-                showCancelButton: true,
-                cancelButtonText: 'Cancel'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    let form_data = new FormData(document.querySelector("#FormCreateSchedule"));
-                    form_data.append('_token', '{{ csrf_token() }}');
-                    $.ajax({
-                        url: "{{ route('schedules.store') }}",
-                        type: "POST",
-                        data: form_data,
-                        dataType: "json",
-                        contentType: false,
-                        processData: false,
-                        success: function(data) {
-                            if (data.status == "success") {
-                                Swal.fire({
-                                    title: data.msg,
-                                    icon: 'success'
-                                }).then(function() {
-                                    $('#modal-create-schedule').modal('hide');
-                                    $('#example1').DataTable().ajax.reload();
-                                });
-                            } else {
-                                let msg = '';
-                                if (data.valid && data.valid['employee']) {
-                                    msg += '<strong>Employee field is required!</strong><br>';
-                                }
-                                if (data.valid && data.valid['shift']) {
-                                    msg += '<strong>Shift field is required!</strong><br>';
-                                }
-                                Swal.fire({
-                                    title: data.msg,
-                                    html: msg,
-                                    icon: 'error'
-                                });
-                            }
-                        },
-                        error: function(jqXHR, textStatus, errorThrown) {
-                            Swal.fire({
-                                title: "Error",
-                                text: errorThrown,
-                                icon: 'error'
-                            });
-                            console.log(textStatus, errorThrown);
-                        }
-                    });
-                }
-            });
-        });
+        $('#modal-create-schedule').modal('show');
     });
 </script>
+
+<script>
+    $('#btn-save-schedule').click(function(e) {
+     e.preventDefault();
+     Swal.fire({
+         title: "Create Schedule",
+         text: "Are you sure?"
+         , icon: 'warning'
+         , target: document.getElementById('content')
+         , reverseButtons: true
+         , confirmButtonText: "Yes"
+         , showCancelButton: true
+         , cancelButtonText: 'Cancel'
+     }).then((result) => {
+         if (result.isConfirmed) {
+             let act = '{{ route("schedules.store") }}'
+             let form_data = new FormData(document.querySelector("#FormCreateSchedule"));
+             form_data.append('_token', '{{ csrf_token() }}')
+             $.ajax({
+                 url: act
+                 , type: "POST"
+                 , data: form_data
+                 , dataType: "json"
+                 , contentType: false
+                 , processData: false
+                 , success: function(data) {
+
+                     if (data.status == "success") {
+                         Swal.fire({
+                             title: data.msg
+                             , icon:'success'
+                         }).then(function(result) {
+                             $('#modal-create-schedule').modal('hide');
+                             $('#example1').DataTable().ajax.reload();
+                         });
+
+                     } else {
+                         var msg = '';
+                         if(data.valid['name']){
+                             msg += '<strong>Nama Wajib Diisi!</strong><br>';
+                         }
+                         Swal.fire({
+                             title:  data.msg,
+                             html: msg,
+                             icon:'error'
+                         })
+                     
+                     }
+                 },
+                 error: function(jqXHR, textStatus, errorThrown) {
+         
+                     Swal.fire({
+                         title:  textStatus,
+                         text: errorThrown,
+                         icon:'error', 
+                     })
+                     console.log(textStatus, errorThrown);
+                 }
+
+             })
+
+         }
+     })
+ })
+</script>
+

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Departement;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -27,6 +28,11 @@ class Posision extends Model
         static::creating(function ($model) {
             $model->uuid = Str::uuid(); 
         });
+    }
+
+    public function departement()
+    {
+        return $this->belongsTo(Departement::class);
     }
     
 

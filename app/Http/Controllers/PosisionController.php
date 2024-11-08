@@ -25,7 +25,6 @@ class PosisionController extends Controller
     public function tableDataAdmin()
     {
         $posision = Posision::orderBy('id','desc')->get();
-        $departements = Departement::all();
         $counter = 1;
         if (request()->ajax()) {
             $dataTable = Datatables::of($posision)
@@ -33,7 +32,7 @@ class PosisionController extends Controller
                     return $counter++;
                 })
                 ->addColumn('Departement', function ($item) {
-                    return $departements->name;
+                    return $item->departement->name;
                 })
                 ->addColumn('Name', function ($item) {
                     return $item->name;
@@ -42,7 +41,7 @@ class PosisionController extends Controller
                     return $item->salary;
                 })
                 ->addColumn('Action', function ($item)  {
-                    $encryptedIdString = "'" . strval($item->uuid) . "'";
+                    $encryptedIdString = "'" . $item->uuid . "'";
                     $button = 
                     '
                     <div class="dropdown">

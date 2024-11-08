@@ -89,7 +89,11 @@ Route::middleware(['web','auth'])->group(function(){
             Route::get('/{id}/edit', [ScheduleController::class, 'edit'])->name('edit');
             Route::put('/{id}', [ScheduleController::class, 'update'])->name('update'); 
             Route::delete('{id}', [ScheduleController::class, 'destroy'])->name('destroy'); 
-            Route::get('schedule-table', [ScheduleController::class, 'table'])->name('table'); 
+            Route::get('schedule-table', [ScheduleController::class, 'table'])->name('table');
+
+            Route::get('/generate-form', [ScheduleController::class, 'generateForm'])->name('generate.form'); 
+            Route::post('/generate-store', [ScheduleController::class, 'generateStore'])->name('generate.store'); 
+
         });
 
 

@@ -1,8 +1,8 @@
 @extends('layouts.base')
-@section('title', 'Dashboard')
+@section('title', 'Dashboard Admin')
 
 @section('toolbar')
-    @include('components.toolbar', ['title' => 'Dashboard', 'subtitle' => 'Dashboard'])
+    @include('components.toolbar', ['title' => 'Dashboard Admin', 'subtitle' => 'Admin'])
 @endsection
 
 @section('styles')

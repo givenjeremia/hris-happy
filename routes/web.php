@@ -43,6 +43,9 @@ Auth::routes();
 Route::middleware(['web','auth'])->group(function(){
     Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
+    Route::get('/update-current-location', [App\Http\Controllers\HomeController::class, 'updateCurrentLocation'])->name('update.current.location');
+
+
 
     Route::prefix('master-data')->group(function () {
         Route::resource('clients', ClientController::class);
@@ -75,6 +78,8 @@ Route::middleware(['web','auth'])->group(function(){
         Route::resource('overtimes', OvertimeController::class);
         
         Route::resource('presences', PresenceController::class);
+        Route::get('presences-table', [PresenceController::class,'table'])->name('presences.table');
+
         
         Route::resource('vacations', VacationController::class);
         

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Client;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -33,4 +34,10 @@ class Employee extends Model
             $model->uuid = Str::uuid(); 
         });
     }
+
+    public function client()
+    {
+        return $this->belongsTo(Client::class);
+    }
+
 }

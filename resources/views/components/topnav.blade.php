@@ -86,7 +86,9 @@
             Hallo, {{  auth()->user()->name  }}
           </a>
           <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right text-center">
+            <span class="dropdown-header">Anda Login Sebagai : <strong>{{ auth()->user()->roles->pluck('name')[0] }}</strong></span>
             <span class="dropdown-header">{{  auth()->user()->email  }}</span>
+
             <div class="dropdown-divider"></div>
             <a href="#" class="dropdown-item">
               Ubah Password

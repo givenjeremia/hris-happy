@@ -11,6 +11,7 @@ use App\Models\Departement;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 
@@ -30,7 +31,13 @@ class ScheduleController extends Controller
 
     public function table()
     {
-        $schedule = Schedule::orderBy('id','desc')->get();
+        $user = Auth::user();
+        if($user->getRoleNames()->first() == 'admin') {
+            $schedule = Schedule::orderBy('id','desc')->get();
+        }
+        else{
+            $schedule = Schedule::where('employee_id',$user->employee->id)->get();
+        }
         $counter = 1;
         if (request()->ajax()) {
             $dataTable = Datatables::of($schedule)

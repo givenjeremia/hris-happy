@@ -9,10 +9,12 @@
 <div class="card">
     <div class="card-header">
         <h3 class="card-title">Schedule List</h3>
-        <div class="card-tools">
-            <button onclick="generateForm()" type="button" class="btn btn-secondary mx-3">Generate Schedule</button>
-            <button id="createScheduleBtn" type="button" class="btn btn-primary">Add Schedule</button>
-        </div>
+        @if (auth()->user()->roles->pluck('name')[0] == 'admin')
+            <div class="card-tools">
+                <button onclick="generateForm()" type="button" class="btn btn-secondary mx-3">Generate Schedule</button>
+                <button id="createScheduleBtn" type="button" class="btn btn-primary">Add Schedule</button>
+            </div>
+        @endif
     </div>
     <div class="card-body">
         <div class="table-responsive">

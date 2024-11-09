@@ -31,7 +31,8 @@ class Vacation extends Model
             $model->uuid = Str::uuid(); 
         });
     }
-    
+
+   
 
     
 }

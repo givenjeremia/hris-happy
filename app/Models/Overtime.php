@@ -14,15 +14,10 @@ class Overtime extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'posision_id',
-        'nik',
-        'full_name',
-        'date_of_birth',
-        'address',
-        'bank_account_name',
-        'bank_account_number',
-        'phone_number',
-        'code_ptkp',
+        'employee_id',
+        'date',
+        'long_overtime',
+        'information',
     ];
 
     protected static function boot()

@@ -13,6 +13,11 @@ class Vacation extends Model
 
     use SoftDeletes;
 
+    public const STATUS_PENDING = 'PENDING';
+    public const STATUS_ACCEPTED = 'ACCEPTED';
+    public const STATUS_REJECTED = 'REJECTED';
+
+
     protected $fillable = [
         'employee_id',
         'start_date',

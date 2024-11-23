@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Employee;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -35,6 +36,11 @@ class Vacation extends Model
         static::creating(function ($model) {
             $model->uuid = Str::uuid(); 
         });
+    }
+
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class, 'employee_id');
     }
 
    

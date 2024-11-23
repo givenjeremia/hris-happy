@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Vacation;
+use App\Models\Employee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -12,41 +13,44 @@ use Illuminate\Support\Facades\Validator;
 class VacationController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of the resource for the logged-in user.
      */
     public function index()
     {
         try {
             return view('page.vacation.index');
         } catch (\Throwable $e) {
-            # code...
+            return response()->json(['status' => 'error', 'msg' => 'Failed to load page', 'err' => $e->getMessage()], 500);
         }
     }
 
-    public function tableDataAdmin()
+    /**
+     * Get vacations data for the logged-in user or admin.
+     */
+    public function tableData()
     {
         $user = Auth::user();
-        if($user->getRoleNames()->first() == 'admin') {
-            $vacation = Vacation::orderBy('id','desc')->get();
-        }
-        else{
-            $vacation = Vacation::where('employee_id',$user->employee->id)->get();
-        }
-       
         $counter = 1;
+
+        if ($user->getRoleNames()->first() == 'admin') {
+            $vacations = Vacation::with('employee')->orderBy('id', 'desc')->get();
+        } else {
+            $vacations = Vacation::where('employee_id', $user->employee->id)->orderBy('id', 'desc')->get();
+        }
+
         if (request()->ajax()) {
-            $dataTable = Datatables::of($vacation)
+            $dataTable = DataTables::of($vacations)
                 ->addColumn('No', function () use (&$counter) {
                     return $counter++;
                 })
-                ->addColumn('Name', function ($item) {
-                    return 'Name Of Employee';
+                ->addColumn('Employee Name', function ($item) {
+                    return $item->employee->name ?? '-';
                 })
                 ->addColumn('Start Date', function ($item) {
-                    return $item->start_date;
+                    return Carbon::parse($item->start_date)->format('Y-m-d');
                 })
                 ->addColumn('End Date', function ($item) {
-                    return $item->end_date;
+                    return Carbon::parse($item->end_date)->format('Y-m-d');
                 })
                 ->addColumn('Subject', function ($item) {
                     return $item->subject;
@@ -54,154 +58,118 @@ class VacationController extends Controller
                 ->addColumn('Information', function ($item) {
                     return $item->information;
                 })
-                ->addColumn('Action', function ($item)  {
-                    $encryptedIdString = "'" . $item->uuid . "'";
-                    $button = 
-                    '
-                    <div class="dropdown">
-                        <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                            class="btn btn-secondary w-100">Action</a>
-                        <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow" style="left: 0px; right: inherit;">
-                            <li><a href="#" onclick="updateData(' . $encryptedIdString . ')"  class="dropdown-item">Ubah</a></li>
-                            <li><a href="#" onclick="deleteData(' . $encryptedIdString . ')"  class="dropdown-item">Hapus</a></li>
-                        </ul>
-                    </div>
-                    ';
-                    return $button;
-                })->rawColumns(['No','Departement','Name','Salary', 'Action']);
-               
-            return $dataTable->make(true);
-        }
-    }
+                ->addColumn('Status', function ($item) {
+                    return $item->status;
+                })
+                ->addColumn('Action', function ($item) {
+                    if (Auth::user()->getRoleNames()->first() == 'admin') {
+                        return '
+                            <button onclick="approveVacation(\'' . $item->uuid . '\')" class="btn btn-success btn-sm">Approve</button>
+                            <button onclick="rejectVacation(\'' . $item->uuid . '\')" class="btn btn-danger btn-sm">Reject</button>
+                        ';
+                    }
+                    return '-';
+                })
+                ->rawColumns(['Action'])
+                ->make(true);
 
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        try {
-            # code...
-        } catch (\Throwable $e) {
-            # code...
+            return $dataTable;
         }
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created vacation request.
      */
     public function store(Request $request)
     {
         try {
             $validator = Validator::make($request->all(), [
-                'departement' => 'required',
-                'date'  => 'required',
+                'date' => 'required',
                 'subject' => 'required',
                 'information' => 'required',
             ]);
+
             if ($validator->fails()) {
-                return response()->json(array('status' => 'error','msg' => 'Failed Create Vacation','err'=>'Check Input','valid'=>$validator->errors()), 200);
+                return response()->json(['status' => 'error', 'msg' => 'Validation Error', 'errors' => $validator->errors()], 400);
             }
-            else{
-                $user = Auth::user();
-          
-                $vacation = Vacation::create($request->except('_token', '_method'));
-                $vacation->employee_id = $user->employee->id;
 
-                // Get Date Start And End
-                [$startDate, $endDate] = explode(' - ', $request->get('date'));
-                $start = Carbon::parse($startDate);
-                $end = Carbon::parse($endDate);
-                $vacation->start_date = $start;
-                $vacation->end_date = $end;
+            $user = Auth::user();
 
-                $vacation->status = Vacation::STATUS_PENDING;
-                
-                $vacation->save();
-                return response()->json(array('status' => 'success','msg' => 'Success Create Vacation'), 201);
+            $vacation = new Vacation();
+            $vacation->employee_id = $user->employee->id;
 
-            }
+            [$startDate, $endDate] = explode(' - ', $request->date);
+            $vacation->start_date = Carbon::parse($startDate);
+            $vacation->end_date = Carbon::parse($endDate);
+
+            $vacation->subject = $request->subject;
+            $vacation->information = $request->information;
+            $vacation->status = Vacation::STATUS_PENDING;
+
+            $vacation->save();
+
+            return response()->json(['status' => 'success', 'msg' => 'Vacation request submitted successfully.'], 201);
         } catch (\Throwable $e) {
-            return response()->json(array('status' => 'error','msg' => 'Failed Create Vacation','err'=>$e->getMessage()), 500);
+            return response()->json(['status' => 'error', 'msg' => 'Failed to submit vacation request', 'err' => $e->getMessage()], 500);
         }
     }
 
     /**
-     * Display the specified resource.
+     * Approve a vacation request (Admin).
      */
-    public function show(Vacation $vacation)
+    public function approve($uuid)
     {
         try {
-            # code...
-        } catch (\Throwable $e) {
-            # code...
-        }
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Vacation $vacation)
-    {
-        try {
-            # code...
-        } catch (\Throwable $e) {
-            # code...
-        }
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, $vacation)
-    {
-        try {
-            $validator = Validator::make($request->all(), [
-                'departement' => 'required',
-                'date'  => 'required',
-                'subject' => 'required',
-                'information' => 'required',
-            ]);
-            if ($validator->fails()) {
-                return response()->json(array('status' => 'error','msg' => 'Failed Create Vacation','err'=>'Check Input','valid'=>$validator->errors()), 200);
+            $vacation = Vacation::firstWhere('uuid', $uuid);
+            if (!$vacation) {
+                return response()->json(['status' => 'error', 'msg' => 'Vacation not found'], 404);
             }
-            else{
-                $user = Auth::user();
-          
-                $vacation = Vacation::firstWhere('uuid',$vacation);
-                $vacation = $vacation->fill($request->except('_token', '_method'));
-                $vacation->employee_id = $user->employee->id;
 
-                // Get Date Start And End
-                [$startDate, $endDate] = explode(' - ', $request->get('date'));
-                $start = Carbon::parse($startDate);
-                $end = Carbon::parse($endDate);
-                $vacation->start_date = $start;
-                $vacation->end_date = $end;
+            $vacation->status = Vacation::STATUS_APPROVED;
+            $vacation->save();
 
-                $vacation->status = Vacation::STATUS_PENDING;
-                
-                $vacation->save();
-                return response()->json(array('status' => 'success','msg' => 'Success Create Vacation'), 201);
-
-            }
+            return response()->json(['status' => 'success', 'msg' => 'Vacation approved successfully.']);
         } catch (\Throwable $e) {
-            return response()->json(['status' => 'error', 'msg' => 'Error Update Vacation', 'err' => $e->getMessage()], 500);
+            return response()->json(['status' => 'error', 'msg' => 'Failed to approve vacation', 'err' => $e->getMessage()], 500);
         }
-           
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Reject a vacation request (Admin).
      */
-    public function destroy($vacation)
+    public function reject($uuid)
     {
         try {
-            $vacation = Vacation::firstWhere('uuid', $vacation);
+            $vacation = Vacation::firstWhere('uuid', $uuid);
+            if (!$vacation) {
+                return response()->json(['status' => 'error', 'msg' => 'Vacation not found'], 404);
+            }
+
+            $vacation->status = Vacation::STATUS_REJECTED;
+            $vacation->save();
+
+            return response()->json(['status' => 'success', 'msg' => 'Vacation rejected successfully.']);
+        } catch (\Throwable $e) {
+            return response()->json(['status' => 'error', 'msg' => 'Failed to reject vacation', 'err' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Delete a vacation request.
+     */
+    public function destroy($uuid)
+    {
+        try {
+            $vacation = Vacation::firstWhere('uuid', $uuid);
+            if (!$vacation) {
+                return response()->json(['status' => 'error', 'msg' => 'Vacation not found'], 404);
+            }
+
             $vacation->delete();
-            return response()->json(['status' => 'success', 'msg' => 'Success Delete Vacation'], 200);
+
+            return response()->json(['status' => 'success', 'msg' => 'Vacation deleted successfully.']);
         } catch (\Throwable $e) {
-            return response()->json(['status' => 'error', 'msg' => 'Error Delete Vacation', 'err' => $e->getMessage()], 500);
+            return response()->json(['status' => 'error', 'msg' => 'Failed to delete vacation', 'err' => $e->getMessage()], 500);
         }
     }
 }

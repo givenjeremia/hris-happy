@@ -45,7 +45,7 @@
 
               @if (auth()->user()->hasRole('admin'))
               
-                <li><a href="{{ route('employee.index') }}" class="dropdown-item {{ request()->routeIs('employee.index') ? 'active' : '' }}">Data</a></li>
+                <li><a href="{{ route('employee.index') }}" class="dropdown-item {{ request()->routeIs('employee.index') ? 'active' : '' }}">Data Employee</a></li>
 
                 <li><a href="#" class="dropdown-item">Salary Calculation</a></li>
 

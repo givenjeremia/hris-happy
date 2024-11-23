@@ -73,16 +73,21 @@ Route::middleware(['web','auth'])->group(function(){
         Route::resource('employee', EmployeeController::class);
         Route::get('employee-table', [EmployeeController::class ,'tableDataAdmin'])->name('employee.table');
         
-        
-        
-        Route::resource('overtimes', OvertimeController::class);
+        Route::resource('overtimes', OvertimeController::class);    
         
         Route::resource('presences', PresenceController::class);
         Route::get('presences-table', [PresenceController::class,'table'])->name('presences.table');
 
-        
-        Route::resource('vacations', VacationController::class);
-        
+        // Vacation
+        Route::prefix('vacations')->name('vacations.')->group(function () {
+            Route::get('/', [VacationController::class, 'index'])->name('index');
+            Route::get('/table', [VacationController::class, 'tableDataAdmin'])->name('tableData');
+            Route::post('/', [VacationController::class, 'store'])->name('store');
+            Route::get('/{vacation}', [VacationController::class, 'show'])->name('show'); 
+            Route::put('/{vacation}', [VacationController::class, 'update'])->name('update');
+            Route::delete('/{vacation}', [VacationController::class, 'destroy'])->name('destroy');
+        });
+
         Route::resource('shifts', ShiftController::class);
         Route::get('shifts-table', [ShiftController::class ,'tableDataAdmin'])->name('shifts.table');
 

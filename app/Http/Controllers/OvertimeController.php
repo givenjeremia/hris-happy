@@ -17,6 +17,12 @@ class OvertimeController extends Controller
     public function index()
     {
         try {
+            // If Return With Ajax
+            if (request()->ajax()) {
+                return $this->tableDataAdmin();
+            }
+
+            // Return Page
             return view('page.overtime.index');
         } catch (\Throwable $e) {
             # code...
@@ -39,8 +45,8 @@ class OvertimeController extends Controller
                 ->addColumn('No', function () use (&$counter) {
                     return $counter++;
                 })
-                ->addColumn('Name', function ($item) {
-                    return 'Name Of Employee';
+                ->addColumn('Name Employee', function ($item) {
+                    return $item->employee->full_name;
                 })
                 ->addColumn('Date', function ($item) {
                     return $item->date;
@@ -65,7 +71,7 @@ class OvertimeController extends Controller
                     </div>
                     ';
                     return $button;
-                })->rawColumns(['No','Departement','Name','Salary', 'Action']);
+                })->rawColumns(['No','Name Employee','Date','Long Overtime','Information', 'Action']);
                
             return $dataTable->make(true);
         }

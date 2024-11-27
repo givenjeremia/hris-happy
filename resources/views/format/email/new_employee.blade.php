@@ -32,9 +32,9 @@
                 <tbody>
                     <tr style="height: 0;">
                         <td>
-                            <img alt=""
+                            {{-- <img alt=""
                                 src="https://titik-koma.givenjeremia.com/brand/logo/titik_koma.png"
-                                height="30px" />
+                                height="30px" /> --}}
                         </td>
                         <td style="text-align: right;">
                             <span style="font-size: 16px; line-height: 30px; color: black;">{{ $data['date'] }}</span>
@@ -123,7 +123,7 @@
             font-weight: 600;
             color: #434343;
           ">
-                Titik Koma Cafe
+                HRIS SISTEM
             </p>
 
             <p style="margin: 0; margin-top: 16px; color: #434343;">

@@ -44,7 +44,7 @@ class VacationController extends Controller
                     return $counter++;
                 })
                 ->addColumn('Employee Name', function ($item) {
-                    return $item->employee->name ?? '-';
+                    return $item->employee->full_name;
                 })
                 ->addColumn('Start Date', function ($item) {
                     return Carbon::parse($item->start_date)->format('Y-m-d');
@@ -62,13 +62,24 @@ class VacationController extends Controller
                     return $item->status;
                 })
                 ->addColumn('Action', function ($item) {
-                    if (Auth::user()->getRoleNames()->first() == 'admin') {
-                        return '
-                            <button onclick="approveVacation(\'' . $item->uuid . '\')" class="btn btn-success btn-sm">Approve</button>
-                            <button onclick="rejectVacation(\'' . $item->uuid . '\')" class="btn btn-danger btn-sm">Reject</button>
-                        ';
+                    $button = '-';
+                    $button_approve = ' <button onclick="updateStatusVacation(\'' . $item->uuid . '\', \'' . encrypt(Vacation::STATUS_ACCEPTED) . '\')" class="btn btn-success btn-sm">Approve</button>';
+                    $button_reject = ' <button onclick="updateStatusVacation(\'' . $item->uuid . '\', \'' . encrypt(Vacation::STATUS_REJECTED) . '\')" class="btn btn-danger btn-sm">Reject</button>';
+                    $button_cancel = ' <button onclick="updateStatusVacation(\'' . $item->uuid . '\', \'' . encrypt(Vacation::STATUS_CANCELED) . '\')" class="btn btn-danger btn-sm">Cancel</button>';
+                    if ($item->status != Vacation::STATUS_CANCELED) {
+                        if (Auth::user()->getRoleNames()->first() == 'admin') {
+                            if ($item->status == Vacation::STATUS_PENDING) {
+                                $button = $button_approve . $button_reject;
+                            }
+                            else {
+                                $button = $button_cancel;
+                            }
+                        }
+                        if ($item->status == Vacation::STATUS_PENDING || Auth::user()->getRoleNames()->first() != 'admin') {
+                            $button =  $button_cancel;
+                        }
                     }
-                    return '-';
+                    return $button;
                 })
                 ->rawColumns(['Action'])
                 ->make(true);
@@ -114,43 +125,38 @@ class VacationController extends Controller
         }
     }
 
-    /**
-     * Approve a vacation request (Admin).
-     */
-    public function approve($uuid)
+
+    public function updateStatus($vacation, Request $request)
     {
         try {
-            $vacation = Vacation::firstWhere('uuid', $uuid);
+            // Cek Validasi Status
+            $validator = Validator::make($request->all(), [
+                'status' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json(['status' => 'error', 'msg' => 'Validation Error', 'errors' => $validator->errors()], 400);
+            }
+            // Cek Vacation
+            $vacation = Vacation::firstWhere('uuid', $vacation);
             if (!$vacation) {
                 return response()->json(['status' => 'error', 'msg' => 'Vacation not found'], 404);
             }
+           
 
-            $vacation->status = Vacation::STATUS_APPROVED;
-            $vacation->save();
+            $status_decrypt = decrypt($request->get('status'));
+            $status = Vacation::isValidStatus($status_decrypt);
 
-            return response()->json(['status' => 'success', 'msg' => 'Vacation approved successfully.']);
-        } catch (\Throwable $e) {
-            return response()->json(['status' => 'error', 'msg' => 'Failed to approve vacation', 'err' => $e->getMessage()], 500);
-        }
-    }
-
-    /**
-     * Reject a vacation request (Admin).
-     */
-    public function reject($uuid)
-    {
-        try {
-            $vacation = Vacation::firstWhere('uuid', $uuid);
-            if (!$vacation) {
-                return response()->json(['status' => 'error', 'msg' => 'Vacation not found'], 404);
+            if (!$status) {
+                return response()->json(['status' => 'error', 'msg' => 'Invalid status'], 400);
             }
 
-            $vacation->status = Vacation::STATUS_REJECTED;
+            $vacation->status = $status_decrypt;
             $vacation->save();
 
-            return response()->json(['status' => 'success', 'msg' => 'Vacation rejected successfully.']);
+            return response()->json(['status' => 'success', 'msg' => 'Vacation updated status successfully.']);
         } catch (\Throwable $e) {
-            return response()->json(['status' => 'error', 'msg' => 'Failed to reject vacation', 'err' => $e->getMessage()], 500);
+            return response()->json(['status' => 'error', 'msg' => 'Failed to update status vacation', 'err' => $e->getMessage()], 500);
         }
     }
 

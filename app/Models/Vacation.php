@@ -17,6 +17,19 @@ class Vacation extends Model
     public const STATUS_PENDING = 'PENDING';
     public const STATUS_ACCEPTED = 'ACCEPTED';
     public const STATUS_REJECTED = 'REJECTED';
+    public const STATUS_CANCELED = 'CANCELED';
+
+    private const VALID_STATUSES = [
+        self::STATUS_PENDING,
+        self::STATUS_ACCEPTED,
+        self::STATUS_REJECTED,
+        self::STATUS_CANCELED,
+    ];
+
+    public static function isValidStatus(string $status): bool
+    {
+        return in_array($status, self::VALID_STATUSES, true) ? $status : null;
+    }
 
 
     protected $fillable = [
@@ -40,7 +53,7 @@ class Vacation extends Model
 
     public function employee()
     {
-        return $this->belongsTo(Employee::class, 'employee_id');
+        return $this->belongsTo(Employee::class);
     }
 
    

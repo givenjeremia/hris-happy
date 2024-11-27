@@ -12,7 +12,7 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label>Date</label>
-                        <input type="text" name="date" class="form-control" placeholder="YYYY-MM-DD - YYYY-MM-DD" required>
+                        <input type="text" name="date" class="form-control" id="date-vacation" placeholder="YYYY-MM-DD - YYYY-MM-DD" required>
                     </div>
                     <div class="form-group">
                         <label>Subject</label>

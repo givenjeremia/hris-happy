@@ -81,11 +81,14 @@ Route::middleware(['web','auth'])->group(function(){
         // Vacation
         Route::prefix('vacations')->name('vacations.')->group(function () {
             Route::get('/', [VacationController::class, 'index'])->name('index');
-            Route::get('/table', [VacationController::class, 'tableDataAdmin'])->name('tableData');
+            Route::get('/table', [VacationController::class, 'tableData'])->name('tableData');
             Route::post('/', [VacationController::class, 'store'])->name('store');
             Route::get('/{vacation}', [VacationController::class, 'show'])->name('show'); 
             Route::put('/{vacation}', [VacationController::class, 'update'])->name('update');
             Route::delete('/{vacation}', [VacationController::class, 'destroy'])->name('destroy');
+
+
+            Route::put('/{vacation}/status', [VacationController::class, 'updateStatus'])->name('update.status');
         });
 
         Route::resource('shifts', ShiftController::class);

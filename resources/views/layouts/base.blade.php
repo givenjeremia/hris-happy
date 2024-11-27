@@ -198,7 +198,9 @@
         });
     </script>
 
-
+    <script>
+        const isAdmin = "{{ auth()->user()->hasRole('admin') ? 'true' : 'false' }}";
+    </script>
     @yield('scripts')
 </body>
 

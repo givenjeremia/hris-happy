@@ -11,7 +11,11 @@
     <div class="card-header">
         <h3 class="card-title">Tabel Data</h3>
         <div class="card-tools">
-            <a href="{{ route('employee.create') }}" type="button" class="btn btn-primary">Create</a>
+            @if (auth()->user()->hasRole('employee'))
+                <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal-create">
+                    <i class="fa fa-plus"></i> Add Overtime
+                </button>
+            @endif
         </div>
     </div>
     <div class="card-body">
@@ -22,6 +26,10 @@
     </div>
 </div>
 <div id="modal-div"></div>
+
+@if (auth()->user()->hasRole('employee'))
+    @include('page.overtime.create')
+@endif
 
 @endsection
 
@@ -73,4 +81,35 @@
         });
     });
 </script>
+
+    @if (auth()->user()->hasRole('employee'))
+        <script>
+            // Add Overtime
+            $('#btn-save-create').click(function(e) {
+                e.preventDefault();
+                const formData = new FormData($('#form-create')[0]);
+                $.ajax({
+                    url: "{{ route('overtimes.store') }}",
+                    method: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            $('#modal-create').modal('hide');
+                            Swal.fire('Success', response.msg, 'success');
+                            $('#example1').DataTable().ajax.reload();
+                        } else {
+                            Swal.fire('Error', response.msg, 'error');
+                        }
+                    },
+                    error: function(xhr) {
+                        Swal.fire('Error', 'An error occurred. Please try again.', 'error');
+                    }
+                });
+            });
+
+        </script>
+    @endif
+
 @endsection

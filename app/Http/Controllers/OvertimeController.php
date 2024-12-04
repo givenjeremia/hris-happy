@@ -45,7 +45,7 @@ class OvertimeController extends Controller
                 ->addColumn('No', function () use (&$counter) {
                     return $counter++;
                 })
-                ->addColumn('Name Employee', function ($item) {
+                ->addColumn('Employee Name', function ($item) {
                     return $item->employee->full_name;
                 })
                 ->addColumn('Date', function ($item) {
@@ -65,13 +65,12 @@ class OvertimeController extends Controller
                         <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
                             class="btn btn-secondary w-100">Action</a>
                         <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow" style="left: 0px; right: inherit;">
-                            <li><a href="#" onclick="updateData(' . $encryptedIdString . ')"  class="dropdown-item">Ubah</a></li>
                             <li><a href="#" onclick="deleteData(' . $encryptedIdString . ')"  class="dropdown-item">Hapus</a></li>
                         </ul>
                     </div>
                     ';
                     return $button;
-                })->rawColumns(['No','Name Employee','Date','Long Overtime','Information', 'Action']);
+                })->rawColumns(['No','Employee Name','Date','Long Overtime','Information', 'Action']);
                
             return $dataTable->make(true);
         }

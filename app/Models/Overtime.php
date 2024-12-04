@@ -28,5 +28,10 @@ class Overtime extends Model
             $model->uuid = Str::uuid(); 
         });
     }
+
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class);
+    }
     
 }

@@ -19,6 +19,7 @@ use App\Http\Controllers\PosisionController;
 use App\Http\Controllers\PresenceController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\VacationController;
+use App\Http\Controllers\AllowanceController;
 use App\Http\Controllers\DepartementController;
 
 /*
@@ -111,6 +112,9 @@ Route::middleware(['web','auth'])->group(function(){
 
 
     });
+
+
+    Route::resource('allowance', AllowanceController::class);
     
     
 

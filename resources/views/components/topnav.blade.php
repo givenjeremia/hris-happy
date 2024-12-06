@@ -32,7 +32,7 @@
 
                 <li><a href="{{ route('shifts.index') }}" class="dropdown-item {{ request()->routeIs('shifts.index') ? 'active' : '' }}">Shift</a></li>
 
-                <li><a href="{{ route('allowance.index') }}" class="dropdown-item {{ request()->routeIs('allowance.index') ? 'active' : '' }}">Tunjangan</a></li>
+                <li><a href="{{ route('allowance.index') }}" class="dropdown-item {{ request()->routeIs('allowance.index') ? 'active' : '' }}">Allowance</a></li>
 
                 
 

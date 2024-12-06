@@ -15,6 +15,11 @@ class AllowanceController extends Controller
     public function index()
     {
         try {
+            // If Return With Ajax
+            if (request()->ajax()) {
+                return $this->tableDataAdmin();
+            }
+
             return view('page.allowance.index');
         } catch (\Throwable $e) {
             # code...
@@ -123,9 +128,9 @@ class AllowanceController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'departement' => 'required',
+                'desc' => 'required',
                 'name' => 'required',
-                'salary' => 'required',
+                'nominal' => 'required',
             ]);
             if ($validator->fails()) {
                 return response()->json(array('status' => 'error','msg' => 'Failed Update Allowance','err'=>'Check Input','valid'=>$validator->errors()), 200);

@@ -1,8 +1,8 @@
 @extends('layouts.base')
-@section('title', 'Tujungan')
+@section('title', 'Allowance')
 
 @section('toolbar')
-    @include('components.toolbar', ['title' => 'Tunjungan', 'subtitle' => 'Tunjangan'])
+    @include('components.toolbar', ['title' => 'Allowance', 'subtitle' => 'Allowance'])
 @endsection
 
 @section('content')

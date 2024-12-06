@@ -17,11 +17,11 @@
                     </div>
                     <div class="form-group required ">
                         <label for="exampleInputEmail1" class="control-label">Desc</label>
-                        <input type="text" name="salary" value="{{ $allowance->desc }}" class="form-control" id="exampleInputEmail1" placeholder="Write Data">
+                        <input type="text" name="desc" value="{{ $allowance->desc }}" class="form-control" id="exampleInputEmail1" placeholder="Write Data">
                     </div>
                     <div class="form-group required ">
                         <label for="exampleInputEmail1" class="control-label">Nominal</label>
-                        <input type="text" name="salary" value="{{ $allowance->Nominal }}" class="form-control" id="exampleInputEmail1" placeholder="Write Data">
+                        <input type="text" name="nominal" value="{{ $allowance->nominal }}" class="form-control" id="exampleInputEmail1" placeholder="Write Data">
                     </div>
                 </form>
             </div>
@@ -43,7 +43,7 @@
        $('#btn-simpan').click(function(e) {
         e.preventDefault();
         Swal.fire({
-            title: "Update Posision",
+            title: "Update Allowance",
             text: "Are you sure?"
             , icon: 'warning'
             , target: document.getElementById('content')

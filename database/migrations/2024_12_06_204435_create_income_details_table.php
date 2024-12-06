@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('income_details', function (Blueprint $table) {
             $table->id();
+            $table->uuid('uuid')->unique();
+            
             $table->foreignId('income_id')->nullable()->constrained('incomes');
 
             // "TUNJANGAN", "LEMBUR", "POTONGAN", "GAJI POKOK

@@ -14,9 +14,10 @@ return new class extends Migration
         Schema::create('allowance_details', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique();
-            $table->foreignId('allowance_id')->nullable()->constrained('employees');
-            $table->foreignId('employee_id')->nullable()->constrained('allowances');
+            $table->foreignId('employee_id')->nullable()->constrained('employees');
+            $table->foreignId('allowance_id')->nullable()->constrained('allowances');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

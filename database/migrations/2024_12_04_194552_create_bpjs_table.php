@@ -18,6 +18,7 @@ return new class extends Migration
             $table->double('nominal')->nullable();
             $table->string('type')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

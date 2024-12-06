@@ -11,14 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('allowances', function (Blueprint $table) {
+        Schema::create('income_details', function (Blueprint $table) {
             $table->id();
-            $table->uuid('uuid')->unique();
-            $table->string('name');
+            $table->foreignId('income_id')->nullable()->constrained('incomes');
+
+            // "TUNJANGAN", "LEMBUR", "POTONGAN", "GAJI POKOK
+            $table->text('category');
+
+            // "IN" , "OUT
+            $table->text('type');
+
             $table->text('desc');
+
             $table->double('nominal');
+
             $table->timestamps();
-            $table->softDeletes();
+            
         });
     }
 
@@ -27,6 +35,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('allowances');
+        Schema::dropIfExists('income_details');
     }
 };

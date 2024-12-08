@@ -2,8 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class BpjsSeeder extends Seeder
 {
@@ -12,6 +14,17 @@ class BpjsSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        $roles = [
+            [
+                'uuid' => Str::uuid(),
+                'nominal' => 10.89,
+                'type' => 'BPJS TOTAL',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+         
+        ];
+
+        DB::table('bpjs')->insert($roles);
     }
 }

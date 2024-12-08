@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Client;
+use App\Models\Posision;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -12,6 +13,8 @@ class Employee extends Model
 {
     use HasFactory;
     use SoftDeletes;
+
+
 
     protected $fillable = [
         'client_id',
@@ -24,6 +27,7 @@ class Employee extends Model
         'bank_account_number',
         'phone_number',
         'code_ptkp',
+        'safety_equipment'
     ];
 
     protected static function boot()
@@ -38,6 +42,27 @@ class Employee extends Model
     public function client()
     {
         return $this->belongsTo(Client::class);
+    }
+
+    public function posision()
+    {
+        return $this->belongsTo(Posision::class);
+    }
+
+
+    public function presence()
+    {
+        return $this->hasMany(Presence::class);
+    }
+
+    public function overtime()
+    {
+        return $this->hasMany(Overtime::class);
+    }
+
+    public function schedule()
+    {
+        return $this->hasMany(Schedule::class);
     }
 
 }

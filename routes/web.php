@@ -1,6 +1,8 @@
 <?php
 
+use App\Models\Bpjs;
 use App\Models\Shift;
+use App\Models\Income;
 use App\Models\Contract;
 use App\Models\Employee;
 use App\Models\Overtime;
@@ -10,8 +12,10 @@ use App\Models\Vacation;
 use App\Models\Departement;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\BpjsController;
 use App\Http\Controllers\ShiftController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\OvertimeController;
@@ -115,6 +119,11 @@ Route::middleware(['web','auth'])->group(function(){
 
 
     Route::resource('allowance', AllowanceController::class);
+    Route::resource('bpjs', BpjsController::class);
+
+    Route::resource('income', IncomeController::class);
+    Route::get('/income/generate-salary', [IncomeController::class, 'generateGajiAll'])->name('income.generate.salary'); 
+
     
     
 

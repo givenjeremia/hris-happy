@@ -34,6 +34,8 @@
 
                 <li><a href="{{ route('allowance.index') }}" class="dropdown-item {{ request()->routeIs('allowance.index') ? 'active' : '' }}">Allowance</a></li>
 
+                <li><a href="{{ route('bpjs.index') }}" class="dropdown-item {{ request()->routeIs('bpjs.index') ? 'active' : '' }}">BPJS</a></li>
+
                 
 
               </ul>
@@ -72,6 +74,15 @@
 
             </ul>
           </li>
+
+          @if (auth()->user()->hasRole('admin'))
+
+          <li class="nav-item">
+            <a href="{{ route('income.index') }}" class="nav-link {{ request()->routeIs('income.index') ? 'active' : '' }}">Income</a>
+          </li>
+
+          @endif
+
 
 
 

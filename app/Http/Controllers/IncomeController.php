@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
 use App\Models\Income;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Validator;
 
 class IncomeController extends Controller
 {
@@ -12,7 +15,56 @@ class IncomeController extends Controller
      */
     public function index()
     {
-        //
+        try {
+            // If Return With Ajax
+            if (request()->ajax()) {
+                return $this->tableDataAdmin();
+            }
+
+            return view('page.income.index');
+        } catch (\Throwable $e) {
+            # code...
+        }
+    }
+
+    public function tableDataAdmin()
+    {
+        $income = Income::orderBy('id','desc')->get();
+        $counter = 1;
+        if (request()->ajax()) {
+            $dataTable = Datatables::of($income)
+                ->addColumn('No', function () use (&$counter) {
+                    return $counter++;
+                })
+                ->addColumn('Name Employee', function ($item) {
+                    return $item->employee_id;
+                })
+                ->addColumn('Nominal', function ($item) {
+                    return $item->nominal;
+                })
+                ->addColumn('Period', function ($item) {
+                    return $item->period;
+                })
+                ->addColumn('Status', function ($item) {
+                    return $item->status;
+                })
+                ->addColumn('Action', function ($item)  {
+                    $encryptedIdString = "'" . $item->uuid . "'";
+                    $button = 
+                    '
+                    <div class="dropdown">
+                        <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                            class="btn btn-secondary w-100">Action</a>
+                        <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow" style="left: 0px; right: inherit;">
+                            <li><a href="#" onclick="detailData(' . $encryptedIdString . ')"  class="dropdown-item">Detail</a></li>
+                        </ul>
+                    </div>
+                    ';
+                    return $button;
+                })->rawColumns(['No',"Name Employee",'Nominal','Period','Status', 'Action']);
+               
+            return $dataTable->make(true);
+        }
     }
 
     /**
@@ -34,9 +86,18 @@ class IncomeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Income $income)
+    public function show($income)
     {
-        //
+        try {
+            $income = Income::firstWhere('uuid',$income);
+            
+            return response()->json([
+                'status' => 'success', 
+                'msg' => view('page.income.modal.detail', compact('income'))->render()
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['status' => 'error', 'msg' => $th->getMessage()], 500);
+        }
     }
 
     /**
@@ -62,4 +123,22 @@ class IncomeController extends Controller
     {
         //
     }
+
+    public function generateGajiAll(Request $request)
+    {
+        try {
+            $employee = Employee::all();
+            $count =  0;
+            foreach ($employee as $key => $value) {
+                $income = Employee::generateSalary($value->id);
+                $count += 1;
+            }
+            return response()->json(['status'=>'success','msg' => 'Salary generated successy', 'data' => $income], 201);
+            
+        } catch (\Throwable $e) {
+            return response()->json(['status'=>'failed','msg' => 'Failed to generate salary', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+
 }

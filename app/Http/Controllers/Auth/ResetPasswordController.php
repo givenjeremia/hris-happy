@@ -4,6 +4,10 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ResetsPasswords;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class ResetPasswordController extends Controller
 {
@@ -18,12 +22,35 @@ class ResetPasswordController extends Controller
     |
     */
 
-    use ResetsPasswords;
+    public function showResetForm()
+    {
+        return view('auth.passwords.reset'); // Nama file blade di resources/views/reset-password.blade.php
+    }
 
-    /**
-     * Where to redirect users after resetting their password.
-     *
-     * @var string
-     */
-    protected $redirectTo = '/home';
+    public function reset(Request $request)
+    {
+        // Validasi input
+        $validator = Validator::make($request->all(), [
+            'current_password' => 'required|string|min:6',
+            'new_password' => 'required|string|min:6|confirmed',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        // Mendapatkan pengguna yang sedang login
+        $user = Auth::user();
+
+        // Mengecek apakah password lama yang dimasukkan sesuai
+        if (!Hash::check($request->current_password, $user->password)) {
+            return response()->json(['message' => 'Password lama tidak sesuai.'], 400);
+        }
+
+        // Mengubah password ke password baru
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+
+        return response()->json(['message' => 'Password berhasil diubah.'], 200);
+    }
 }

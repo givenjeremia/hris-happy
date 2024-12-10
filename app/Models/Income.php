@@ -42,7 +42,7 @@ class Income extends Model
             // Get Basic Salary From Position
             $basic_salary = $employee->posision->salary;
         
-            // Get Schedule and Presence Counts
+            // Get Schedule, Presence, and vacation Counts
             $count_schedule = $employee->schedule()
                 ->whereMonth('date', Carbon::now()->month)
                 ->whereYear('date', Carbon::now()->year)
@@ -53,6 +53,21 @@ class Income extends Model
                 ->whereYear('date', Carbon::now()->year)
                 ->where('status', 'CLOCK_OUT')
                 ->count();
+
+            $vacations = $employee->vacation()
+                ->whereMonth('start_date', Carbon::now()->month)
+                ->whereYear('start_date', Carbon::now()->year)
+                ->where('status', 'ACCEPTED')
+                ->get()
+                ->sum(function ($vacation) {
+                    return $vacation->start_date->diffInDays($vacation->end_date) + 1;
+                });
+
+            // Calculate OffDay
+            $count_vacation = 0;
+            foreach ($vacations as $vacation) {
+                $count_vacation += $vacation->start_date->diffInDays($vacation->end_date) + 1;
+            }
         
             // Calculate Allowances
             $allowance = [];
@@ -90,8 +105,25 @@ class Income extends Model
             // Safety Equipment
             $safety_equipment = $employee->safety_equipment ? $employee->safety_equipment : 0;
         
-            // Potongan Telat
-            $potongan_telat = ($count_schedule - $count_presensi) * 7000;
+            // Calculate Penalty
+            $penalty = 0;
+            foreach ($employee->schedule()->whereMonth('date', Carbon::now()->month)->get() as $schedule) {
+                $presence = $employee->presense()->where('date', $schedule->date)->first();
+                if (!$presence && !$vacations->contains(function ($vacation) use ($schedule) {
+                    return $vacation->start_date <= $schedule->date && $vacation->end_date >= $schedule->date;
+                })) {
+                    $penalty += 7000;
+                }
+            }
+
+            // Calculate late penlaty
+            $late_penalty = 0;
+            foreach ($employee->presense()->whereMonth('date', Carbon::now()->month)->get() as $presensi) {
+                if ($presensi->status === 'CLOCK_OUT' && $presensi->clock_in && $presensi->clock_in > $presensi->shift_start) {
+                    $late_minutes = $presensi->clock_in->diffInMinutes($presensi->shift_start);
+                    $late_penalty += floor($late_minutes / 30) * 5000;  // Denda 5000 per 30 mnt
+                }
+            }
 
             // Potongan PPH21 IF(R3>=4500000;(R3-4500000)*5%;0)
             $pph21 = $ptkp >= 4500000 ? (int)$ptkp * 0.05 : 0;
@@ -101,7 +133,7 @@ class Income extends Model
             $profit = $allowance_total * 0.8;
 
             // Amout Salary Gaji pokok + BPJS + Safety + Profit - Potongan
-            $amout_salary = $basic_salary + $bpjs_total + $safety_equipment + $profit - ($potongan_telat + $pph21);
+            $amout_salary = $basic_salary + $bpjs_total + $safety_equipment + $profit - ($penalty + $late_penalty + $pph21);
 
 
             ///////////////////////////////// Add In Database
@@ -143,7 +175,8 @@ class Income extends Model
 
             // //////////////////////////////// ADD OUT
             $out_detail = [
-                'Absensi' => $potongan_telat,
+                'Terlambat' => $late_penalty,
+                'Absensi' => $penalty,
                 'PPH21' => $pph21,
             ];
 

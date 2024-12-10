@@ -103,7 +103,7 @@
             <span class="dropdown-header">{{  auth()->user()->email  }}</span>
 
             <div class="dropdown-divider"></div>
-            <a href="#" class="dropdown-item">
+            <a href="{{ route('password.reset.form') }}" class="dropdown-item">
               Ubah Password
             </a>
             <div class="dropdown-divider"></div>

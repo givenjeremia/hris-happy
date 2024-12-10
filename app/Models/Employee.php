@@ -65,4 +65,9 @@ class Employee extends Model
         return $this->hasMany(Schedule::class);
     }
 
+    public function vacation()
+    {
+        return $this->hasMany(Vacation::class);
+    }
+
 }

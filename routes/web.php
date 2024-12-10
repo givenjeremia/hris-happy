@@ -25,6 +25,7 @@ use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\VacationController;
 use App\Http\Controllers\AllowanceController;
 use App\Http\Controllers\DepartementController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,6 +48,9 @@ Auth::routes();
 
 Route::middleware(['web','auth'])->group(function(){
     Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+    Route::get('/reset-password', [ResetPasswordController::class, 'showResetForm'])->name('password.reset.form');
+    Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
 
     Route::get('/update-current-location', [App\Http\Controllers\HomeController::class, 'updateCurrentLocation'])->name('update.current.location');
 
@@ -123,12 +127,6 @@ Route::middleware(['web','auth'])->group(function(){
 
     Route::resource('income', IncomeController::class);
     Route::get('/income/generate-salary', [IncomeController::class, 'generateGajiAll'])->name('income.generate.salary'); 
-
-    
-    
-
-
-
 
 });
 

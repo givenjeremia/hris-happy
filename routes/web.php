@@ -76,6 +76,9 @@ Route::middleware(['web','auth'])->group(function(){
         Route::resource('allowance', AllowanceController::class);
         Route::resource('bpjs', BpjsController::class);
 
+        Route::resource('shifts', ShiftController::class);
+        Route::get('shifts-table', [ShiftController::class ,'tableDataAdmin'])->name('shifts.table');
+
     });
 
 
@@ -103,8 +106,7 @@ Route::middleware(['web','auth'])->group(function(){
             Route::put('/{vacation}/status', [VacationController::class, 'updateStatus'])->name('update.status');
         });
 
-        Route::resource('shifts', ShiftController::class);
-        Route::get('shifts-table', [ShiftController::class ,'tableDataAdmin'])->name('shifts.table');
+       
 
     
 

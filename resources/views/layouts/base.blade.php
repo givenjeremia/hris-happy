@@ -59,6 +59,9 @@
         .card{
             border-radius: 15px;
         }
+        .modal-content{
+            border-radius: 20px !important;
+        }
         .btn{
             border-radius: 10px;
         }

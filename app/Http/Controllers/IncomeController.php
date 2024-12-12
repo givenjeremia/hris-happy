@@ -56,7 +56,7 @@ class IncomeController extends Controller
                         <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
                             class="btn btn-secondary w-100">Action</a>
                         <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow" style="left: 0px; right: inherit;">
-                            <li><a href="#" onclick="detailData(' . $encryptedIdString . ')"  class="dropdown-item">Detail</a></li>
+                            <li><a href="#" onclick="detailDataData(' . $encryptedIdString . ')"  class="dropdown-item">Detail</a></li>
                         </ul>
                     </div>
                     ';

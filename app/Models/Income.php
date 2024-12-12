@@ -102,7 +102,7 @@ class Income extends Model
             $bpjs_total = 0; // Total BPJS
             $bpjs_all = Bpjs::all();
             foreach ($bpjs_all as $item) {
-                $bpjs_amounts[$item->type] = $basic_salary * $item->nominal;
+                $bpjs_amounts[$item->type] = $basic_salary * ($item->nominal/100);
                 $bpjs_total += $bpjs_amounts[$item->type]; 
             }
         

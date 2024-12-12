@@ -83,10 +83,12 @@
 <script>
     function generateGaji(){
         let url = "{{ route('income.generate.salary') }}"
+        // Add Loading
         $.ajax({
             url: url,
             method: "GET",
             success: function(response) {
+                $('#example1').DataTable().ajax.reload();
                 Swal.fire({
                     title: response.msg,
                     icon: 'success',
@@ -104,7 +106,7 @@
         });
     }
 </script>
-{{-- 
+
 <script>
     function detailDataData(uuid){
         let url = "{{ route('income.show', ':uuid') }}".replace(':uuid', uuid)
@@ -132,6 +134,6 @@
             }
         });
     }
-</script> --}}
+</script>
 
 @endsection

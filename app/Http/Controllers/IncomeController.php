@@ -37,10 +37,10 @@ class IncomeController extends Controller
                     return $counter++;
                 })
                 ->addColumn('Name Employee', function ($item) {
-                    return $item->employee_id;
+                    return $item->employee->full_name;
                 })
                 ->addColumn('Nominal', function ($item) {
-                    return $item->nominal;
+                    return 'Rp. '.number_format($item->nominal, 0, ",", ".");
                 })
                 ->addColumn('Period', function ($item) {
                     return $item->period;
@@ -130,10 +130,10 @@ class IncomeController extends Controller
             $employee = Employee::all();
             $count =  0;
             foreach ($employee as $key => $value) {
-                $income = Employee::generateSalary($value->id);
+                $income = Income::generateSalary($value->id);
                 $count += 1;
             }
-            return response()->json(['status'=>'success','msg' => 'Salary generated successy', 'data' => $income], 201);
+            return response()->json(['status'=>'success','msg' => 'Salary generated successy', 'count' => $count], 201);
             
         } catch (\Throwable $e) {
             return response()->json(['status'=>'failed','msg' => 'Failed to generate salary', 'error' => $e->getMessage()], 500);

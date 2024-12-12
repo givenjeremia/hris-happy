@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Employee;
 use Illuminate\Support\Str;
 use App\Models\IncomeDetail;
 use Illuminate\Support\Carbon;
@@ -26,6 +27,11 @@ class Income extends Model
         });
     }
 
+    public function employee()
+	{
+		return $this->belongsTo(Employee::class);
+	}
+
     public function incomeDetail()
     {
         return $this->hasMany(IncomeDetail::class);
@@ -48,7 +54,7 @@ class Income extends Model
                 ->whereYear('date', Carbon::now()->year)
                 ->count();
         
-            $count_presensi = $employee->presense()
+            $count_presensi = $employee->presence()
                 ->whereMonth('date', Carbon::now()->month)
                 ->whereYear('date', Carbon::now()->year)
                 ->where('status', 'CLOCK_OUT')
@@ -64,10 +70,10 @@ class Income extends Model
                 });
 
             // Calculate OffDay
-            $count_vacation = 0;
-            foreach ($vacations as $vacation) {
-                $count_vacation += $vacation->start_date->diffInDays($vacation->end_date) + 1;
-            }
+            $count_vacation = $vacations;
+            // foreach ($vacations as $vacation) {
+            //     $count_vacation += $vacation->start_date->diffInDays($vacation->end_date) + 1;
+            // }
         
             // Calculate Allowances
             $allowance = [];
@@ -76,7 +82,7 @@ class Income extends Model
             foreach ($allowance_all as $key => $value) {
                 $allowance[$value->name]['nominal'] = $value->nominal;
                 $allowance[$value->name]['amount'] = $value->nominal * $count_schedule;
-                $allowance_total += $allowance[$value->name]['amount'];
+                $allowance_total += $value->nominal * $count_schedule;
             }
         
             // Calculate Overtime
@@ -84,7 +90,8 @@ class Income extends Model
                 ->where('long_overtime', '>', 0)
                 ->whereMonth('date', Carbon::now()->month)
                 ->whereYear('date', Carbon::now()->year)
-                ->sum('long_overtime');
+                ->sum(DB::raw('CAST(long_overtime AS NUMERIC)'));;
+
         
             // Overtime
             $overtime_rate = ((int)$basic_salary / 173);
@@ -108,7 +115,7 @@ class Income extends Model
             // Calculate Penalty
             $penalty = 0;
             foreach ($employee->schedule()->whereMonth('date', Carbon::now()->month)->get() as $schedule) {
-                $presence = $employee->presense()->where('date', $schedule->date)->first();
+                $presence = $employee->presence()->where('date', $schedule->date)->first();
                 if (!$presence && !$vacations->contains(function ($vacation) use ($schedule) {
                     return $vacation->start_date <= $schedule->date && $vacation->end_date >= $schedule->date;
                 })) {
@@ -118,7 +125,7 @@ class Income extends Model
 
             // Calculate late penlaty
             $late_penalty = 0;
-            foreach ($employee->presense()->whereMonth('date', Carbon::now()->month)->get() as $presensi) {
+            foreach ($employee->presence()->whereMonth('date', Carbon::now()->month)->get() as $presensi) {
                 if ($presensi->status === 'CLOCK_OUT' && $presensi->clock_in && $presensi->clock_in > $presensi->shift_start) {
                     $late_minutes = $presensi->clock_in->diffInMinutes($presensi->shift_start);
                     $late_penalty += floor($late_minutes / 30) * 5000;  // Denda 5000 per 30 mnt
@@ -135,7 +142,6 @@ class Income extends Model
             // Amout Salary Gaji pokok + BPJS + Safety + Profit - Potongan
             $amout_salary = $basic_salary + $bpjs_total + $safety_equipment + $profit - ($penalty + $late_penalty + $pph21);
 
-
             ///////////////////////////////// Add In Database
             
             // In data
@@ -144,6 +150,7 @@ class Income extends Model
             $new_income->nominal = $amout_salary;
             $new_income->period = now();
             $new_income->employee_id = $employee->id;
+            $new_income->status = Income::STATUS_NO_PAYMENT;
             $new_income->save();
 
             // Add In Detail
@@ -167,6 +174,7 @@ class Income extends Model
                 $new_detail_income = new IncomeDetail();
                 $new_detail_income->uuid = Str::uuid();
                 $new_detail_income->type = 'IN';
+                $new_detail_income->desc = '-';
                 $new_detail_income->nominal = $value;
                 $new_detail_income->category = $key;
                 $new_detail_income->income_id = $new_income->id;
@@ -184,6 +192,8 @@ class Income extends Model
                 $new_detail_income = new IncomeDetail();
                 $new_detail_income->uuid = Str::uuid();
                 $new_detail_income->type = 'OUT';
+                $new_detail_income->desc = '-';
+
                 $new_detail_income->nominal = $value;
                 $new_detail_income->category = $key;
                 $new_detail_income->income_id = $new_income->id;

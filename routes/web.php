@@ -107,9 +107,7 @@ Route::middleware(['web','auth'])->group(function(){
         Route::get('shifts-table', [ShiftController::class ,'tableDataAdmin'])->name('shifts.table');
 
     
-        
-        Route::resource('income', IncomeController::class);
-        Route::get('/income/generate-salary', [IncomeController::class, 'generateGajiAll'])->name('income.generate.salary'); 
+
 
     });
 
@@ -128,7 +126,8 @@ Route::middleware(['web','auth'])->group(function(){
 
     });
 
-
+    Route::resource('income', IncomeController::class);
+    Route::get('income-generate/generate-salary-all', [IncomeController::class, 'generateGajiAll'])->name('income.generate.salary'); 
 
 
 });

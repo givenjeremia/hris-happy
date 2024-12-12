@@ -104,7 +104,7 @@
         });
     }
 </script>
-
+{{-- 
 <script>
     function detailDataData(uuid){
         let url = "{{ route('income.show', ':uuid') }}".replace(':uuid', uuid)
@@ -132,6 +132,6 @@
             }
         });
     }
-</script>
+</script> --}}
 
 @endsection

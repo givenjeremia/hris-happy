@@ -50,6 +50,20 @@
         }
     </style>
 
+    <style>
+        .navbar-active{
+            border-radius: 10px;
+            background-color: #5fa8d3 !important;
+            color: white !important;
+        }
+        .card{
+            border-radius: 15px;
+        }
+        .btn{
+            border-radius: 10px;
+        }
+    </style>
+
 
     @yield('styles')
 

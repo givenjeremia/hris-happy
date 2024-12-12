@@ -50,7 +50,7 @@ Route::middleware(['web','auth'])->group(function(){
     Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
     Route::get('/reset-password', [ResetPasswordController::class, 'showResetForm'])->name('password.reset.form');
-    Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
+    Route::post('/reset-password-store', [ResetPasswordController::class, 'reset'])->name('password.update');
 
     Route::get('/update-current-location', [App\Http\Controllers\HomeController::class, 'updateCurrentLocation'])->name('update.current.location');
 
@@ -72,6 +72,9 @@ Route::middleware(['web','auth'])->group(function(){
     
         Route::resource('posisions', PosisionController::class);
         Route::get('posisions-table', [PosisionController::class ,'tableDataAdmin'])->name('posisions.table');
+
+        Route::resource('allowance', AllowanceController::class);
+        Route::resource('bpjs', BpjsController::class);
 
     });
 
@@ -103,30 +106,30 @@ Route::middleware(['web','auth'])->group(function(){
         Route::resource('shifts', ShiftController::class);
         Route::get('shifts-table', [ShiftController::class ,'tableDataAdmin'])->name('shifts.table');
 
-        // Schedule 
-        Route::prefix('schedules')->name('schedules.')->group(function () {
-            Route::get('/', [ScheduleController::class, 'index'])->name('index');
-            Route::get('/create', [ScheduleController::class, 'create'])->name('create'); 
-            Route::post('/', [ScheduleController::class, 'store'])->name('store'); 
-            Route::get('/{id}/edit', [ScheduleController::class, 'edit'])->name('edit');
-            Route::put('/{id}', [ScheduleController::class, 'update'])->name('update'); 
-            Route::delete('{id}', [ScheduleController::class, 'destroy'])->name('destroy'); 
-            Route::get('schedule-table', [ScheduleController::class, 'table'])->name('table');
+    
+        
+        Route::resource('income', IncomeController::class);
+        Route::get('/income/generate-salary', [IncomeController::class, 'generateGajiAll'])->name('income.generate.salary'); 
 
-            Route::get('/generate-form', [ScheduleController::class, 'generateForm'])->name('generate.form'); 
-            Route::post('/generate-store', [ScheduleController::class, 'generateStore'])->name('generate.store'); 
+    });
 
-        });
+     // Schedule 
+    Route::prefix('schedules')->name('schedules.')->group(function () {
+        Route::get('/', [ScheduleController::class, 'index'])->name('index');
+        Route::get('/create', [ScheduleController::class, 'create'])->name('create'); 
+        Route::post('/', [ScheduleController::class, 'store'])->name('store'); 
+        Route::get('/{id}/edit', [ScheduleController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [ScheduleController::class, 'update'])->name('update'); 
+        Route::delete('{id}', [ScheduleController::class, 'destroy'])->name('destroy'); 
+        Route::get('schedule-table', [ScheduleController::class, 'table'])->name('table');
 
+        Route::get('/generate-form', [ScheduleController::class, 'generateForm'])->name('generate.form'); 
+        Route::post('/generate-store', [ScheduleController::class, 'generateStore'])->name('generate.store'); 
 
     });
 
 
-    Route::resource('allowance', AllowanceController::class);
-    Route::resource('bpjs', BpjsController::class);
 
-    Route::resource('income', IncomeController::class);
-    Route::get('/income/generate-salary', [IncomeController::class, 'generateGajiAll'])->name('income.generate.salary'); 
 
 });
 

@@ -13,28 +13,30 @@
         <ul class="navbar-nav">
 
           <li class="nav-item">
-            <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}">Dashboard</a>
+            <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active navbar-active' : '' }}">
+              <i class="nav-icon fas fa-tachometer-alt mr-1"></i>Dashboard
+            </a>
           </li>
 
           @if (auth()->user()->hasRole('admin'))
 
             <li class="nav-item dropdown">
-              <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle">Master Data</a>
-              <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow" style="left: 0px; right: inherit;">
+              <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle {{ request()->is('*master-data*') ? 'active navbar-active' : '' }}"><i class="nav-icon fas fa-file mr-1"></i>Master Data</a>
+              <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow p-2" style="left: 0px; right: inherit;">
 
-                <li><a href="{{ route('clients.index') }}" class="dropdown-item {{ request()->routeIs('clients.index') ? 'active' : '' }}">Client</a></li>
+                <li><a href="{{ route('clients.index') }}" class="dropdown-item {{ request()->is('*master-data/clients*') ? 'active  navbar-active' : '' }}">Client</a></li>
 
-                <li><a href="{{ route('contracts.index') }}" class="dropdown-item {{ request()->routeIs('contracts.index') ? 'active' : '' }}">Contract</a></li>
+                <li><a href="{{ route('contracts.index') }}" class="dropdown-item {{ request()->is('*master-data/contracts*')  ? 'active navbar-active' : '' }}">Contract</a></li>
 
-                <li><a href="{{ route('departements.index') }}" class="dropdown-item {{ request()->routeIs('departements.index') ? 'active' : '' }}">Departement</a></li>
+                <li><a href="{{ route('departements.index') }}" class="dropdown-item {{ request()->is('*master-data/departements*') ? 'active navbar-active' : '' }}">Departement</a></li>
 
-                <li><a href="{{ route('posisions.index') }}" class="dropdown-item {{ request()->routeIs('posisions.index') ? 'active' : '' }}">Posision</a></li>
+                <li><a href="{{ route('posisions.index') }}" class="dropdown-item {{ request()->is('*master-data/posisions*') ? 'active navbar-active' : '' }}">Posision</a></li>
 
-                <li><a href="{{ route('shifts.index') }}" class="dropdown-item {{ request()->routeIs('shifts.index') ? 'active' : '' }}">Shift</a></li>
+                <li><a href="{{ route('shifts.index') }}" class="dropdown-item {{ request()->is('*master-data/shifts*') ? 'active navbar-active' : '' }}">Shift</a></li>
 
-                <li><a href="{{ route('allowance.index') }}" class="dropdown-item {{ request()->routeIs('allowance.index') ? 'active' : '' }}">Allowance</a></li>
+                <li><a href="{{ route('allowance.index') }}" class="dropdown-item {{ request()->is('*master-data/allowance*') ? 'active navbar-active' : '' }}">Allowance</a></li>
 
-                <li><a href="{{ route('bpjs.index') }}" class="dropdown-item {{ request()->routeIs('bpjs.index') ? 'active' : '' }}">BPJS</a></li>
+                <li><a href="{{ route('bpjs.index') }}" class="dropdown-item {{ request()->is('*master-data/bpjs*') ? 'active navbar-active' : '' }}">BPJS</a></li>
 
                 
 
@@ -44,33 +46,31 @@
           @endif
 
           <li class="nav-item dropdown">
-            <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle">Personnel</a>
-            <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow" style="left: 0px; right: inherit;">
+            <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle {{ request()->is('*personnel*') ? 'active navbar-active' : '' }}"><i class="nav-icon fas fa-users mr-1"></i>Personnel</a>
+            <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow p-2" style="left: 0px; right: inherit;">
 
               @if (auth()->user()->hasRole('admin'))
               
-                <li><a href="{{ route('employee.index') }}" class="dropdown-item {{ request()->routeIs('employee.index') ? 'active' : '' }}">Data Employee</a></li>
-
-                <li><a href="#" class="dropdown-item">Salary Calculation</a></li>
+                <li><a href="{{ route('employee.index') }}" class="dropdown-item {{ request()->is('*personnel/employee*') ? 'active  navbar-active' : '' }}">Data Employee</a></li>
 
               @endif
               
 
-              <li><a href="{{ route('overtimes.index') }}" class="dropdown-item {{ request()->routeIs('overtimes.index') ? 'active' : '' }}">Overtimes</a></li>
+              <li><a href="{{ route('overtimes.index') }}" class="dropdown-item {{ request()->is('*personnel/overtime*') ? 'active  navbar-active' : '' }}">Overtimes</a></li>
 
-              <li><a href="{{ route('presences.index') }}" class="dropdown-item {{ request()->routeIs('presences.index') ? 'active' : '' }}">Presences</a></li>
+              <li><a href="{{ route('presences.index') }}" class="dropdown-item {{ request()->is('*personnel/presencese*') ? 'active  navbar-active' : '' }}">Presences</a></li>
 
-              <li><a href="{{ route('vacations.index') }}" class="dropdown-item  {{ request()->routeIs('vacations.index') ? 'active' : '' }}">Vacation</a></li>
+              <li><a href="{{ route('vacations.index') }}" class="dropdown-item  {{ request()->is('*personnel/vacations*') ? 'active  navbar-active' : '' }}">Vacation</a></li>
 
 
             </ul>
           </li>
 
           <li class="nav-item dropdown">
-            <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle">Jadwal</a>
-            <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow" style="left: 0px; right: inherit;">
+            <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle {{ request()->is('*schedules*') ? 'active navbar-active' : '' }}"><i class="nav-icon fas fa-calendar mr-1"></i>Jadwal</a>
+            <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow p-2" style="left: 0px; right: inherit;">
 
-              <li><a href="{{ route('schedules.index') }}" class="dropdown-item">Data</a></li>
+              <li><a href="{{ route('schedules.index') }}" class="dropdown-item {{ request()->is('*schedules*') ? 'active  navbar-active' : '' }}">Data</a></li>
 
             </ul>
           </li>
@@ -78,7 +78,9 @@
           @if (auth()->user()->hasRole('admin'))
 
           <li class="nav-item">
-            <a href="{{ route('income.index') }}" class="nav-link {{ request()->routeIs('income.index') ? 'active' : '' }}">Income</a>
+            <a href="{{ route('income.index') }}" class="nav-link {{ request()->routeIs('income.index') ? 'active navbar-active' : '' }}">
+              <i class="nav-icon fas fa-money-bill mr-1"></i>Income
+            </a>
           </li>
 
           @endif

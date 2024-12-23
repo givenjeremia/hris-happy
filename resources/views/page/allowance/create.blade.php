@@ -12,15 +12,15 @@
                     @csrf
                     <div class="form-group required ">
                         <label for="exampleInputEmail1" class="control-label">Name</label>
-                        <input type="text" name="name" class="form-control" id="exampleInputEmail1" placeholder="Write Data">
+                        <input type="text" name="name" class="form-control" id="exampleInputEmail1" placeholder="Name Data">
                     </div>
                     <div class="form-group required ">
                         <label for="exampleInputEmail1" class="control-label">Desc</label>
-                        <input type="text" name="desc" class="form-control" id="exampleInputEmail1" placeholder="Write Data">
+                        <input type="text" name="desc" class="form-control" id="exampleInputEmail1" placeholder="Desc Data">
                     </div>
                     <div class="form-group required ">
                         <label for="exampleInputEmail1" class="control-label">Nominal</label>
-                        <input type="number" name="nominal" class="form-control" id="exampleInputEmail1" placeholder="Write Data">
+                        <input type="number" name="nominal" class="form-control" id="exampleInputEmail1" placeholder="Nominal Data">
                     </div>
                 </form>
             </div>

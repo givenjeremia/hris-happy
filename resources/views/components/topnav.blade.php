@@ -67,7 +67,7 @@
           </li>
 
           <li class="nav-item dropdown">
-            <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle {{ request()->is('*schedules*') ? 'active navbar-active' : '' }}"><i class="nav-icon fas fa-calendar mr-1"></i>Jadwal</a>
+            <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle {{ request()->is('*schedules*') ? 'active navbar-active' : '' }}"><i class="nav-icon fas fa-calendar mr-1"></i>Schedule</a>
             <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow p-2" style="left: 0px; right: inherit;">
 
               <li><a href="{{ route('schedules.index') }}" class="dropdown-item {{ request()->is('*schedules*') ? 'active  navbar-active' : '' }}">Data</a></li>

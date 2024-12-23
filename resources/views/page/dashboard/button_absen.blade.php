@@ -1,11 +1,17 @@
-<button class="btn btn-primary me-3" onclick="absenMasuk()" {{ $presense ? 'disabled' : '' }}>
-    Absen Masuk
-</button>
-
-<button class="btn btn-secondary me-3" onclick="absenKeluar()" {{ !$presense ? 'disabled' : '' }}>
-    Absen Keluar
-</button>
-
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-6">
+            <button class="btn btn-outline-primary btn-block" onclick="absenMasuk()" {{ $presense ? 'disabled' : '' }}>
+                <i class="fas fa-bell"></i> Check In
+            </button>
+        </div>
+        <div class="col-md-6">
+            <button class="btn btn-outline-danger btn-block" onclick="absenKeluar()" {{ !$presense ? 'disabled' : '' }}>
+                <i class="fas fa-sign-out-alt"></i> Check Out
+            </button>
+        </div>
+    </div>
+</div>
 
 @if (!$presense)
 <script>

@@ -29,7 +29,7 @@ class EmployeeController extends Controller
 
     public function tableDataAdmin()
     {
-        $employee = Employee::with('client')->orderBy('id', 'desc')->get(); 
+        $employee = Employee::with(['client', 'posision'])->orderBy('id', 'desc')->get(); 
         $counter = 1;
         if (request()->ajax()) {
             $dataTable = Datatables::of($employee)
@@ -43,8 +43,7 @@ class EmployeeController extends Controller
                     return $item->full_name;
                 })
                 ->addColumn('Posision', function ($item) {
-                    return $item->posision_id;
-                })
+                    return $item->posision->name ?? '-';                })
 
                 ->addColumn('NIK', function ($item) {
                     return $item->nik;

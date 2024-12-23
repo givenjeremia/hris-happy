@@ -16,25 +16,54 @@
     <link rel="stylesheet" href="{{ asset('assets_lte/plugins/icheck-bootstrap/icheck-bootstrap.min.css') }}">
     <!-- Theme style -->
     <link rel="stylesheet" href="{{ asset('assets_lte/dist/css/adminlte.min.css') }}">
+    <style>
+        body {
+            background: linear-gradient(to bottom right, #4e54c8, #8f94fb);
+            color: white;
+        }
+
+        .login-box {
+            margin-top: 10vh;
+        }
+
+        .card-primary {
+            border-top: 3px solid #8f94fb;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary {
+            background-color: #4e54c8;
+            border-color: #4e54c8;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #8f94fb;
+            border-color: #8f94fb;
+        }
+
+        .login-box-msg {
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        input::placeholder {
+            color: #aaa;
+        }
+    </style>
 </head>
 
 <body class="hold-transition login-page">
     <div class="login-box">
-        <!-- /.login-logo -->
         <div class="card card-outline card-primary">
-            {{-- <div class="card-header text-center">
-                <a href="/" class="">
-                    <img src="#" alt="AdminLTE Logo"
-                        class=" img-fluid img-circle elevation-3 w-50" style="opacity: .8">
-                </a>
-            </div> --}}
             <div class="card-body">
                 <p class="login-box-msg">Silahkan Login Aplikasi HRIS!</p>
 
                 <form id="loginForm" method="post">
                     @csrf
                     <div class="input-group mb-3">
-                        <input type="email" name="email" class="form-control" placeholder="Email">
+                        <input type="email" name="email" class="form-control" placeholder="Email" required>
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-envelope"></span>
@@ -42,7 +71,7 @@
                         </div>
                     </div>
                     <div class="input-group mb-3">
-                        <input type="password" name="password" class="form-control" placeholder="Password">
+                        <input type="password" name="password" class="form-control" placeholder="Password" required>
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-lock"></span>
@@ -51,15 +80,9 @@
                     </div>
                     <button type="submit" id="btnLogin" class="btn btn-primary btn-block">Login</button>
                 </form>
-
-
-                <!-- /.social-auth-links -->
             </div>
-            <!-- /.card-body -->
         </div>
-        <!-- /.card -->
     </div>
-    <!-- /.login-box -->
 
     <!-- jQuery -->
     <script src="{{ asset('assets_lte/plugins/jquery/jquery.min.js') }}"></script>
@@ -67,15 +90,25 @@
     <script src="{{ asset('assets_lte/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <!-- AdminLTE App -->
     <script src="{{ asset('assets_lte/dist/js/adminlte.min.js') }}"></script>
-
+    <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
+
     <script>
-        $('#btnLogin').on('click', function(e) {
+        $('#btnLogin').on('click', function (e) {
             e.preventDefault();
-            let act = '{{ route("login") }}'
+            let act = '{{ route("login") }}';
             let form_data = new FormData(document.querySelector("#loginForm"));
-            form_data.append('_token', '{{ csrf_token() }}')
+            form_data.append('_token', '{{ csrf_token() }}');
+
+            Swal.fire({
+                title: 'Logging in...',
+                html: '<div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div>',
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                background: 'rgba(0,0,0,0.9)',
+                color: '#fff',
+            });
+
             $.ajax({
                 url: act,
                 type: "POST",
@@ -83,28 +116,45 @@
                 dataType: "json",
                 contentType: false,
                 processData: false,
-                success: function(data) {
-                    if (data.status == "success") {
+                success: function (data) {
+                    if (data.status === "success") {
                         Swal.fire({
-                            title: data.msg,
+                            position: 'top-end',
                             icon: 'success',
-                            showConfirmButton: true
-                        }).then(function(result) {
-                            location.href = "{{ route('home') }}"
+                            title: data.msg,
+                            showConfirmButton: false,
+                            timer: 1500,
+                            background: 'rgba(0,0,0,0.9)',
+                            color: '#fff',
+                        }).then(() => {
+                            location.href = "{{ route('home') }}";
                         });
-
                     } else {
                         Swal.fire({
-                            title: data.msg,
+                            position: 'top-end',
                             icon: 'error',
-                            showConfirmButton: true
-                        })
+                            title: data.msg,
+                            showConfirmButton: false,
+                            timer: 2000,
+                            background: 'rgba(0,0,0,0.9)',
+                            color: '#fff',
+                        });
                     }
+                },
+                error: function () {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'error',
+                        title: 'Server error, please try again!',
+                        showConfirmButton: false,
+                        timer: 2000,
+                        background: 'rgba(0,0,0,0.9)',
+                        color: '#fff',
+                    });
                 }
-            })
-        })
+            });
+        });
     </script>
-
 </body>
 
 </html>

@@ -8,7 +8,7 @@
 @section('content')
 <div class="card">
     <div class="card-header">
-        <h3 class="card-title">Tabel Data</h3>
+        <h3 class="card-title">BPJS Data</h3>
         <div class="card-tools">
             <a href="#" onclick="createData()" type="button" class="btn btn-primary">Create</a>
         </div>
@@ -43,7 +43,7 @@
                 {
                     data: 'Nominal',
                     name: 'Nominal',
-                    title: 'Nominal',
+                    title: 'Number (in Percent)',
                     className: 'text-nowrap'
                 },
                 {

@@ -8,7 +8,7 @@
 @section('content')
 <div class="card">
     <div class="card-header">
-        <h3 class="card-title">Tabel Data</h3>
+        <h3 class="card-title">Client Data</h3>
         <div class="card-tools">
             <a href="{{ route('clients.create') }}" type="button" class="btn btn-primary">Tambah</a>
         </div>

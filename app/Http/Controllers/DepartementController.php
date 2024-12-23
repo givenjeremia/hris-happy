@@ -37,14 +37,14 @@ class DepartementController extends Controller
                     $encryptedIdString = "'" . strval($item->uuid) . "'";
                     $button = 
                     '
-                    <div class="dropdown">
-                        <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                            class="btn btn-secondary w-100">Action</a>
-                        <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow" style="left: 0px; right: inherit;">
-                            <li><a href="#" onclick="updateData(' . $encryptedIdString . ')"  class="dropdown-item">Ubah</a></li>
-                            <li><a href="#" onclick="deleteData(' . $encryptedIdString . ')"  class="dropdown-item">Hapus</a></li>
-                        </ul>
-                    </div>
+                        <div class="d-flex justify-content-start">
+                            <button type="button" class="btn btn-outline-primary btn-sm mr-2" onclick="updateData(' . $encryptedIdString . ')">
+                                <i class="fas fa-edit"></i> Ubah
+                            </button>
+                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="deleteData(' . $encryptedIdString . ')">
+                                <i class="fas fa-trash"></i> Hapus
+                            </button>
+                        </div>
                     ';
                     return $button;
                 })->rawColumns(['No','Name','Action']);

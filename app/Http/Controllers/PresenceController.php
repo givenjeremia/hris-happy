@@ -233,7 +233,7 @@ class PresenceController extends Controller
             $distance = Presence::convertToDistance([$client_lat, $client_long],[$latitude, $longitude]);
 
      
-            $presence = Presence::fistWhere('uuid',$presence);
+            $presence = Presence::firstWhere('uuid',$presence);
             $presence->latitude_out =$latitude;
             $presence->longitude_out = $longitude;
             $presence->time_out =  $time_now; 

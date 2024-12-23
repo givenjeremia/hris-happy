@@ -72,7 +72,7 @@ class HomeController extends Controller
             }
             else{
                 // Render Button And Check 
-                $presense = Presence::where('employee_id', $user->employee->id)->where('date', now())->first();
+                $presense = Presence::where('employee_id', $user->employee->id)->whereDate('date', Carbon::today())->first();
                 $render_button = view('page.dashboard.button_absen',compact('presense'))->render();
                 $data .= ' Anda Dalam Jangkauan '.$distance.' KM';
             }

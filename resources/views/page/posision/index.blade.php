@@ -8,7 +8,7 @@
 @section('content')
 <div class="card">
     <div class="card-header">
-        <h3 class="card-title">Tabel Data</h3>
+        <h3 class="card-title">Posision Data</h3>
         <div class="card-tools">
             <a href="#" onclick="createData()" type="button" class="btn btn-primary">Create</a>
         </div>
@@ -56,8 +56,11 @@
                     data: 'Salary',
                     name: 'Salary',
                     title: 'Salary',
-                    className: 'text-nowrap'
-                },
+                    className: 'text-nowrap',
+                    render: function(data, type, row) {
+                        return formatRupiah(data);
+                    }
+                },  
                 {
                     data: 'Action',
                     name: 'Action',
@@ -72,6 +75,23 @@
 </script>
 
 <script>
+    function formatRupiah(angka) {
+        // Pastikan angka diubah menjadi format angka
+        let number_string = angka.toString().replace(/[^,\d]/g, '');
+        let split = number_string.split(',');
+        let sisa = split[0].length % 3;
+        let rupiah = split[0].substr(0, sisa);
+        let ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+        if (ribuan) {
+            let separator = sisa ? '.' : '';
+            rupiah += separator + ribuan.join('.');
+        }
+
+        rupiah = split[1] !== undefined ? rupiah + ',' + split[1] : rupiah;
+        return 'Rp. ' + rupiah;
+    }
+
     function createData(){
         let url = "{{ route('posisions.create') }}"
         $.ajax({

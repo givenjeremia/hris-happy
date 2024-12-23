@@ -18,53 +18,51 @@
 @endsection
 
 @section('content')
-
-<div class="row">
-    <div class="col-lg-6">
-        <h3>
-            Lokasi Anda <span id="lat-data">Loading...</span>, <span id="long-data">Loading...</span>
-        </h3>
-        {{-- Badget Diluar Lokasi Atau Tidak --}}
-        <h4>
-            <span id="location-client">Loading...</span>
-        </h4> 
-        <div id="map" class=" rounded"></div> 
-    </div>
-    <div class="col-lg-6">
-        <h3>
-            Jadwal Anda!
-        </h3>
-        <div id="button-check-in-out">
-           
-        </div>
-        <div id="table-3-days-next" class="mt-2">
-            <div class="table-responsive">
-                <table class="table table-bordered">
-                    <thead>
-                      <tr>
-                        <th scope="col">No</th>
-                        <th scope="col">Date</th>
-                        <th scope="col">Shift</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($data_3_day_schedule as $index => $item)
-                            <tr>
-                            <th scope="row">{{ $index + 1 }}</th>
-                            <td>{{ $item->date }}</td>
-                            <td>{{ $item->shift->name }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+<div class="card shadow-lg">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-lg-6">
+                <h3 class="mb-3">
+                    Your Location : 
+                    <span id="lat-data" class="font-weight-normal">Loading...</span>, 
+                    <span id="long-data" class="font-weight-normal">Loading...</span>
+                </h3>
+                {{-- Badge untuk status lokasi --}}
+                <h4 id="location-client" class="text-muted mb-3">Loading...</h4>
+                <div id="map" class="rounded" style="height: 300px;"></div> 
             </div>
-
+            <div class="col-lg-6">
+                <h3 class="mb-3">Your Schedule !!</h3>
+                <div id="button-check-in-out" class="mb-3">
+                    <!-- Button atau aksi lainnya bisa diletakkan di sini -->
+                </div>
+                <div id="table-3-days-next" class="mt-2">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover">
+                            <thead class="thead-dark" align="center">
+                                <tr>
+                                    <th scope="col">No</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Shift</th>
+                                </tr>
+                            </thead>
+                            <tbody align="center">
+                                @foreach ($data_3_day_schedule as $index => $item)
+                                    <tr>
+                                        <th scope="row">{{ $index + 1 }}</th>
+                                        <td>{{ $item->date }}</td>
+                                        <td>{{ $item->shift->name }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-
-
-@endsection 
+@endsection
 
 @section('scripts')
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
@@ -111,7 +109,7 @@
     
                 map.setView([latitude, longitude], 13);
                 const marker = L.marker([latitude, longitude]).addTo(map);
-                marker.bindPopup('Lokasi Kamu Disini!').openPopup();
+                marker.bindPopup('Your Location!').openPopup();
     
                 $('#lat-data').html(latitude)
                 $('#long-data').html(longitude)

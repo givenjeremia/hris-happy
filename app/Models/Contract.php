@@ -30,5 +30,10 @@ class Contract extends Model implements HasMedia
             $model->uuid = Str::uuid(); 
         });
     }
+
+    public function client()
+    {
+        return $this->belongsTo(Client::class, 'client_id', 'id');
+    }
     
 }

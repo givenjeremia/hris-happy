@@ -8,9 +8,9 @@
 @section('content')
 <div class="card">
     <div class="card-header">
-        <h3 class="card-title">Tabel Data</h3>
+        <h3 class="card-title">Salary Data</h3>
         <div class="card-tools">
-            <a href="#" onclick="generateGaji()" type="button" class="btn btn-primary">Generate Gaji</a>
+            <a href="#" onclick="generateGaji()" type="button" class="btn btn-primary">Generate Salary</a>
         </div>
     </div>
     <div class="card-body">

@@ -24,7 +24,7 @@ class ContractController extends Controller
 
     public function tableDataAdmin()
     {
-        $contracts = Contract::orderBy('id','desc')->get();
+        $contracts = Contract::with('client')->orderBy('id','desc')->get();
         $counter = 1;
         if (request()->ajax()) {
             $dataTable = Datatables::of($contracts)
@@ -32,7 +32,7 @@ class ContractController extends Controller
                     return $counter++;
                 })
                 ->addColumn('Client', function ($item) {
-                    return $item->client_id;
+                    return $item->client->name ?? '-';
                 })
                 ->addColumn('Start Date', function ($item) {
                     return $item->start_date;

@@ -18,18 +18,89 @@
 @endsection
 
 @section('content')
+<div class="card shadow-lg">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-info">
+                    <div class="inner">
+                        <h3>Vacation</h3>
+                        <p>Manage Vacations</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-plane"></i>
+                    </div>
+                    <a href="{{ route('vacations.index') }}" class="small-box-footer">
+                        More info <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div>
 
-<div class="row">
-    <div class="col-lg-6">
-        <h3>
-            Lokasi Anda : 
-        </h3>
-        {{-- Badget Diluar Lokasi Atau Tidak --}}
-        <div></div>
-        <div id="map" class=" rounded"></div> 
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>Presences</h3>
+                        <p>Track Presences</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <a href="{{ route('presences.index') }}" class="small-box-footer">
+                        More info <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-warning">
+                    <div class="inner">
+                        <h3>Employee</h3>
+                        <p>View Employees</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    @if (auth()->user()->hasRole('admin'))
+                        <a href="{{ route('employee.index') }}" class="small-box-footer">
+                            More info <i class="fas fa-arrow-circle-right"></i>
+                        </a>
+                    @endif
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-danger">
+                    <div class="inner">
+                        <h3>Overtime</h3>
+                        <p>Manage Overtime</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <a href="{{ route('overtimes.index') }}" class="small-box-footer">
+                        More info <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="col-lg-6">
+</div>
 
+<div class="card shadow-lg">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-lg-6">
+                <h3>
+                    Lokasi Anda : 
+                </h3>
+                {{-- Badget Diluar Lokasi Atau Tidak --}}
+                <div></div>
+                <div id="map" class=" rounded"></div> 
+            </div>
+            <div class="col-lg-6">
+        
+            </div>
+        </div>
     </div>
 </div>
 

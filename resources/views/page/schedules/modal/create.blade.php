@@ -86,7 +86,8 @@
                              , icon:'success'
                          }).then(function(result) {
                              $('#modal-create-schedule').modal('hide');
-                             $('#example1').DataTable().ajax.reload();
+                            //  $('#example1').DataTable().ajax.reload();
+                            window.location.reload();
                          });
 
                      } else {

@@ -71,6 +71,7 @@
             <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow p-2" style="left: 0px; right: inherit;">
 
               <li><a href="{{ route('schedules.index') }}" class="dropdown-item {{ request()->is('*schedules*') ? 'active  navbar-active' : '' }}">Data</a></li>
+              <li><a href="{{ route('schedules.index.calender') }}" class="dropdown-item {{ request()->is('*schedules/calender*') ? 'active  navbar-active' : '' }}">Calender</a></li>
 
             </ul>
           </li>

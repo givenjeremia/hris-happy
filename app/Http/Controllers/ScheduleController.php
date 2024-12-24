@@ -33,10 +33,10 @@ class ScheduleController extends Controller
     {
         $user = Auth::user();
         if($user->getRoleNames()->first() == 'admin') {
-            $schedule = Schedule::orderBy('id','desc')->get();
+            $schedule = Schedule::orderBy('date','desc')->get();
         }
         else{
-            $schedule = Schedule::where('employee_id',$user->employee->id)->get();
+            $schedule = Schedule::where('employee_id',$user->employee->id)->orderBy('date','desc')->get();
         }
         $counter = 1;
         if (request()->ajax()) {
@@ -51,13 +51,13 @@ class ScheduleController extends Controller
                     return $item->shift->name;
                 })
                 ->addColumn('Date', function ($item) {
-                    return $item->date;
+                    return Carbon::parse($item->date)->translatedFormat('d F Y');
                 })
                 ->addColumn('Desc', function ($item) {
                     return $item->desc;
                 })
                 ->addColumn('Created', function ($item) {
-                    return $item->created_at;
+                    return Carbon::parse($item->created_at)->translatedFormat('d F Y, H:i');;
                 })
                 ->addColumn('Action', function ($item)  {
                     $encryptedIdString = "'" . $item->uuid . "'";
@@ -257,7 +257,6 @@ class ScheduleController extends Controller
   public function generateStore(Request $request)
     {
       
-
         DB::beginTransaction();
         try {
             $validator = Validator::make($request->all(), [
@@ -286,16 +285,15 @@ class ScheduleController extends Controller
             $end = Carbon::parse($endDate);
 
             $positionIds = Posision::where('departement_id', $departement->id)->pluck('id');
+
             $employees = Employee::whereIn('posision_id', $positionIds)->pluck('id');
 
             $schedules = [];
             for ($date = $start->copy(); $date->lte($end); $date->addDay()) {
                 foreach ($employees as $employeeId) {
-                    if (!Schedule::where('employee_id', $employeeId)
-                                ->where('shift_id', $shift->id)
-                                ->where('date', $date->toDateString())
-                                ->exists()) {
-                        $schedules[] = [
+                    $check = Schedule::where('employee_id', $employeeId)->where('shift_id', $shift->id)->where('date', $date->toDateString())->exists();
+                    if (!$check) {
+                        $data = [
                             'employee_id' => $employeeId,
                             'uuid' => Str::uuid(),
                             'shift_id' => $shift->id,
@@ -304,6 +302,7 @@ class ScheduleController extends Controller
                             'created_at' => now(),
                             'updated_at' => now()
                         ];
+                        array_push($schedules, $data);
                     }
                 }
             }
@@ -318,4 +317,39 @@ class ScheduleController extends Controller
             return response()->json(['status' => 'error', 'msg' => 'Failed to generate schedules', 'err' => $e->getMessage()], 500);
         }
     }
+
+
+    public function indexCalender()
+    {
+        try {
+            return view('page.schedules.calender');
+        } catch (\Throwable $e) {
+            # code...
+        }
+    }
+
+    public function calenderData($start,$end)
+    {
+        try {
+            $data = Schedule::whereBetween('date', [$start,$end])
+            ->select(DB::raw('DATE(date) as date'), DB::raw('COUNT(*) as count'))
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+            return response()->json(array('status' => 'success','data' => $data), 200);
+        } catch (\Throwable $e) {
+            # code...
+        }
+    }
+
+    public function calenderDataDetail($date)
+    {
+        try {
+            $data = Schedule::where('date',$date)->get();
+            return response()->json(array('status' => 'success', 'msg' => view('page.schedules.modal.detail_kalender',compact('data','date'))->render()), 200);
+        } catch (\Throwable $e) {
+            # code...
+        }
+    }
+
 }

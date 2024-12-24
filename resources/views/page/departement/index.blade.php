@@ -117,4 +117,56 @@
     }
 </script>
 
+<script>
+    function deleteData(data) {
+        Swal.fire({
+            title: 'Are You Sure ?',
+            text: "Delete Data",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya',
+            cancelButtonText: 'Tidak'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                let url = "{{ route('departements.destroy', ':uuid') }}".replace(':uuid', data)
+                $.ajax({
+                    url: url,
+                    method: "DELETE",
+                    data: {
+                        "_token": "{{ csrf_token() }}",
+                    },
+                    success: function(response) {
+
+                        if (response.status == 'success') {
+                            Swal.fire({
+                                title: response.msg,
+                                icon: 'success',
+                                confirmButtonText: "Oke"
+                            }).then(function(result) {
+                                $('#example1').DataTable().ajax.reload();
+                            });
+
+                        } else {
+                            Swal.fire({
+                                title: response.msg,
+                                icon: 'error',
+                                confirmButtonText: "Oke"
+                            })
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire({
+                            title: 'Failed, Server Error',
+                            icon: 'error',
+                            confirmButtonText: "Oke"
+                        })
+                    }
+                });
+            }
+        })
+    }
+</script>
+
 @endsection

@@ -75,7 +75,7 @@ class VacationController extends Controller
                                 $button = $button_cancel;
                             }
                         }
-                        if ($item->status == Vacation::STATUS_PENDING || Auth::user()->getRoleNames()->first() != 'admin') {
+                        if ($item->status == Vacation::STATUS_PENDING && Auth::user()->getRoleNames()->first() != 'admin') {
                             $button =  $button_cancel;
                         }
                     }

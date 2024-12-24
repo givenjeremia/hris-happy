@@ -49,8 +49,6 @@ Auth::routes();
 Route::middleware(['web','auth'])->group(function(){
     Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-    Route::get('/reset-password', [ResetPasswordController::class, 'showResetForm'])->name('password.reset.form');
-    Route::post('/reset-password-store', [ResetPasswordController::class, 'reset'])->name('password.update');
 
     Route::get('/update-current-location', [App\Http\Controllers\HomeController::class, 'updateCurrentLocation'])->name('update.current.location');
 
@@ -126,10 +124,19 @@ Route::middleware(['web','auth'])->group(function(){
         Route::get('/generate-form', [ScheduleController::class, 'generateForm'])->name('generate.form'); 
         Route::post('/generate-store', [ScheduleController::class, 'generateStore'])->name('generate.store'); 
 
+        // Calender
+        Route::get('/calender', [ScheduleController::class ,'indexCalender'])->name('index.calender');
+        Route::get('/calender-data/{start}/{end}', [ScheduleController::class ,'calenderData'])->name('data.calender');
+        Route::get('/calender-data-detail/{date}', [ScheduleController::class ,'calenderDataDetail'])->name('detail.calender');
+
     });
 
     Route::resource('income', IncomeController::class);
     Route::get('income-generate/generate-salary-all', [IncomeController::class, 'generateGajiAll'])->name('income.generate.salary'); 
+
+
+    Route::get('/reset-password', [ResetPasswordController::class, 'showResetForm'])->name('password.reset.form');
+    Route::post('/reset-password-store', [ResetPasswordController::class, 'reset'])->name('password.update');
 
 
 });

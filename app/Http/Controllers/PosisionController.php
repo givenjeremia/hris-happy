@@ -32,7 +32,7 @@ class PosisionController extends Controller
                     return $counter++;
                 })
                 ->addColumn('Departement', function ($item) {
-                    return $item->departement->name;
+                    return $item->departement ? $item->departement->name : 'Departement is Deleted';
                 })
                 ->addColumn('Name', function ($item) {
                     return $item->name;

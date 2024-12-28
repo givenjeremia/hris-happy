@@ -44,14 +44,18 @@
                                     <th scope="col">No</th>
                                     <th scope="col">Date</th>
                                     <th scope="col">Shift</th>
+                                    <th scope="col">Time In</th>
+                                    <th scope="col">Time Out</th>
                                 </tr>
                             </thead>
                             <tbody align="center">
                                 @foreach ($data_3_day_schedule as $index => $item)
                                     <tr>
                                         <th scope="row">{{ $index + 1 }}</th>
-                                        <td>{{ $item->date }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($item->date)->translatedFormat('d F Y') }}</td>
                                         <td>{{ $item->shift->name }}</td>
+                                        <td>{{ $item->shift->time_in }}</td>
+                                        <td>{{ $item->shift->time_out }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>

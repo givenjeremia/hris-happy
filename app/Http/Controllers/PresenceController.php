@@ -212,16 +212,52 @@ class PresenceController extends Controller
             $date_now = Carbon::now()->format('Y-m-d'); 
             $time_now = Carbon::now();
 
+            // Ambil semua jadwal untuk hari ini berdasarkan karyawan
+            $schedules = Schedule::where('employee_id', $user->employee->id)
+            ->whereDate('date', $date_now)
+            ->with('shift') // Relasi ke tabel shift
+            ->get();
 
-            $schedule = Schedule::where('date',$date_now)->first();
-
-            if(!$schedule){
-                return response()->json(['status' => 'error', 'msg' => 'Gagal Clock Out Presences, You Not Schedule'], 200);
+            if ($schedules->isEmpty()) {
+                return response()->json([
+                    'status' => 'error', 
+                    'msg' => 'Gagal Clock Out Presences, You Not Schedule'
+                ], 200);
             }
 
-            $shift = Shift::find($schedule->shift_id);
-            if (!$time_now->gt(Carbon::createFromFormat('H:i:s', $shift->time_out))) {
-                return response()->json(['status' => 'error', 'msg' => 'Gagal Clock Out Presences, You Shift Dont End'], 200);
+            // Waktu sekarang
+            $time_now = Carbon::now();
+
+            // Variabel untuk menyimpan shift yang aktif
+            $currentShift = null;
+
+            // Periksa apakah waktu sekarang melewati semua `time_out` shift
+            foreach ($schedules as $schedule) {
+                $shift = $schedule->shift;
+           
+
+                if ($shift) {
+                    $time_out = Carbon::createFromFormat('H:i:s', $shift->time_out);
+                    $time_in = Carbon::createFromFormat('H:i:s', $shift->time_in);
+
+                    // Tangani jika shift melewati tengah malam
+                    if ($time_out->lessThan($time_in)) {
+                        $time_out->addDay();
+                    }
+
+                    // Periksa apakah waktu sekarang melewati waktu shift
+                    if ($time_now->gt($time_out)) {
+                        $currentShift = $shift; // Tetapkan shift saat ini
+                    }
+                }
+            }
+
+            // Jika tidak ada shift yang waktu kerjanya selesai, tolak permintaan Clock Out
+            if (!$currentShift) {
+                return response()->json([
+                    'status' => 'error',
+                    'msg' => 'Gagal Clock Out Presences, You Shift Dont End'
+                ], 200);
             }
 
             //Client Data

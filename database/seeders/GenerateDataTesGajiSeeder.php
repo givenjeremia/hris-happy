@@ -12,6 +12,10 @@ class GenerateDataTesGajiSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        // Generate Absen
+        
+        // Generate Overtime
+
+        
     }
 }

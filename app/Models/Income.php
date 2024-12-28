@@ -68,13 +68,15 @@ class Income extends Model
                 ->sum(function ($vacation) {
                     return $vacation->start_date->diffInDays($vacation->end_date) + 1;
                 });
+            $vacationCollection = $employee->vacation()
+                ->whereMonth('start_date', Carbon::now()->month)
+                ->whereYear('start_date', Carbon::now()->year)
+                ->where('status', 'ACCEPTED')
+                ->get();
 
             // Calculate OffDay
             $count_vacation = $vacations;
-            // foreach ($vacations as $vacation) {
-            //     $count_vacation += $vacation->start_date->diffInDays($vacation->end_date) + 1;
-            // }
-        
+
             // Calculate Allowances
             $allowance = [];
             $allowance_total = 0;
@@ -112,11 +114,13 @@ class Income extends Model
             // Safety Equipment
             $safety_equipment = $employee->safety_equipment ? $employee->safety_equipment : 0;
         
+
+
             // Calculate Penalty
             $penalty = 0;
             foreach ($employee->schedule()->whereMonth('date', Carbon::now()->month)->get() as $schedule) {
                 $presence = $employee->presence()->where('date', $schedule->date)->first();
-                if (!$presence && !$vacations->contains(function ($vacation) use ($schedule) {
+                if (!$presence && !$vacationCollection->contains(function ($vacation) use ($schedule) {
                     return $vacation->start_date <= $schedule->date && $vacation->end_date >= $schedule->date;
                 })) {
                     $penalty += 7000;

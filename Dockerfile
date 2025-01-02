@@ -14,16 +14,17 @@ ENV TZ="Asia/Jakarta"
 ENV COMPOSER_ALLOW_SUPERUSER=1
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Set up application
+# Set up application (Copy composer.json and lock files first)
 WORKDIR /app
 COPY composer.json composer.lock ./
+
+# Run composer install to install dependencies
 RUN composer install --no-dev --optimize-autoloader -n
 
-# Clear Laravel cache
-RUN php artisan config:clear && php artisan cache:clear && php artisan route:clear && php artisan view:clear
+# Copy the rest of the Laravel application files, including artisan
+COPY . .
 
 # Laravel setup
-COPY . .
 RUN php artisan key:generate && php artisan config:cache && php artisan route:cache && php artisan view:cache
 
 # Fix permissions for Laravel storage and cache

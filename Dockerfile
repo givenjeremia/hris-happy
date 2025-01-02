@@ -1,4 +1,4 @@
-# Base stage: Build dependencies and Laravel setup
+# Base image for PHP with necessary extensions
 FROM php:8.2-fpm as base
 
 # Install necessary PHP extensions and tools
@@ -18,17 +18,17 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 WORKDIR /app
 COPY composer.json composer.lock ./
 
-# Run composer install to install dependencies
+# Install composer dependencies
 RUN composer install --no-dev --optimize-autoloader -n
 
 # Copy the rest of the Laravel application files, including artisan
 COPY . .
 
-# Laravel setup
-RUN php artisan key:generate && php artisan config:cache && php artisan route:cache && php artisan view:cache
-
 # Fix permissions for Laravel storage and cache
 RUN chown -R www-data:www-data /app /app/storage /app/bootstrap/cache
+
+# Clear Laravel cache
+RUN php artisan key:generate && php artisan config:cache && php artisan route:cache && php artisan view:cache
 
 # Production stage: Laravel + Nginx
 FROM nginx:1.25 as production

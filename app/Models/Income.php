@@ -66,7 +66,9 @@ class Income extends Model
                 ->where('status', 'ACCEPTED')
                 ->get()
                 ->sum(function ($vacation) {
-                    return $vacation->start_date->diffInDays($vacation->end_date) + 1;
+                    $startDate = Carbon::parse($vacation->start_date);
+                    $endDate = Carbon::parse($vacation->end_date);
+                    return $startDate->diffInDays($endDate) + 1;
                 });
             $vacationCollection = $employee->vacation()
                 ->whereMonth('start_date', Carbon::now()->month)

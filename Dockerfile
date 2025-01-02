@@ -3,7 +3,7 @@ FROM php:8.2-cli as base
 
 # Install dependencies
 RUN apt update && apt install -y tzdata git unzip libpq-dev libpng-dev libjpeg-dev libwebp-dev libfreetype6-dev libxpm-dev libgd-dev zlib1g-dev libzip-dev libmagickwand-dev && \
-    docker-php-ext-install bcmath pdo pdo_pgsql gd zip
+    docker-php-ext-install bcmath pdo pdo_pgsql gd zip exif
 
 # Set timezone
 ENV TZ="Asia/Jakarta"
@@ -43,8 +43,8 @@ RUN apt update && apt install -y git unzip libpq-dev && \
 
 # Configure Apache to point to Laravel's public directory
 RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /app/public|' /etc/apache2/sites-enabled/000-default.conf
-RUN sed -i 's|*:80|*:8080|' /etc/apache2/sites-enabled/000-default.conf
-RUN sed -i 's|Listen 80|Listen 8080|' /etc/apache2/ports.conf
+RUN sed -i 's|*:8080|*:2001|' /etc/apache2/sites-enabled/000-default.conf
+RUN sed -i 's|Listen 8080|Listen 2001|' /etc/apache2/ports.conf
 RUN sed -i 's|<Directory /var/www/>|<Directory /app/>|' /etc/apache2/apache2.conf
 RUN sed -i 's|<Directory /var/www/>|<Directory /app/>|' /etc/apache2/conf-available/docker-php.conf
 
@@ -54,8 +54,8 @@ COPY php.ini-production /usr/local/etc/php/php.ini
 # Copy application from the previous stage
 COPY --chown=www-data:www-data --from=base /app/ /app/
 
-# Expose the port for Apache
-EXPOSE 8080
+# Expose the new port (2001)
+EXPOSE 2001
 
 # Start Apache and PHP-FPM
 CMD ["apache2-foreground"]

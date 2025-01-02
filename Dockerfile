@@ -19,12 +19,15 @@ WORKDIR /app
 COPY composer.json composer.lock ./
 RUN composer install --no-dev --optimize-autoloader -n
 
+# Clear Laravel cache
+RUN php artisan config:clear && php artisan cache:clear && php artisan route:clear && php artisan view:clear
+
 # Laravel setup
 COPY . .
 RUN php artisan key:generate && php artisan config:cache && php artisan route:cache && php artisan view:cache
 
 # Fix permissions for Laravel storage and cache
-RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache
+RUN chown -R www-data:www-data /app /app/storage /app/bootstrap/cache
 
 # Production stage: Laravel + Nginx
 FROM nginx:1.25 as production

@@ -48,6 +48,9 @@ RUN sed -i 's|Listen 8080|Listen 2001|' /etc/apache2/ports.conf
 RUN sed -i 's|<Directory /var/www/>|<Directory /app/>|' /etc/apache2/apache2.conf
 RUN sed -i 's|<Directory /var/www/>|<Directory /app/>|' /etc/apache2/conf-available/docker-php.conf
 
+# Suppress ServerName warning by adding it to apache2.conf
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
+
 # Copy PHP configuration file
 COPY php.ini-production /usr/local/etc/php/php.ini
 

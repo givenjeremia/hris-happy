@@ -42,7 +42,7 @@ RUN apt update && apt install -y git unzip libpq-dev libpng-dev libjpeg-dev libf
     a2enmod rewrite headers
 
 # Configure Apache to point to Laravel's public directory
-RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /app/public|' /etc/apache2/sites-enabled/000-default.conf
+RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /app|' /etc/apache2/sites-enabled/000-default.conf
 RUN sed -i 's|*:8080|*:2001|' /etc/apache2/sites-enabled/000-default.conf
 RUN sed -i 's|Listen 8080|Listen 2001|' /etc/apache2/ports.conf
 RUN sed -i 's|<Directory /var/www/>|<Directory /app/>|' /etc/apache2/apache2.conf

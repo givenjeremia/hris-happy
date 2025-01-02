@@ -37,8 +37,8 @@ COPY . .
 FROM php:apache-bookworm
 
 # Install dependencies for Apache and PHP extensions
-RUN apt update && apt install -y git unzip libpq-dev && \
-    docker-php-ext-install bcmath pdo pdo_pgsql && \
+RUN apt update && apt install -y git unzip libpq-dev libpng-dev libjpeg-dev libfreetype6-dev libzip-dev && \
+    docker-php-ext-install bcmath pdo pdo_pgsql gd zip && \
     a2enmod rewrite headers
 
 # Configure Apache to point to Laravel's public directory
@@ -54,8 +54,11 @@ COPY php.ini-production /usr/local/etc/php/php.ini
 # Copy application from the previous stage
 COPY --chown=www-data:www-data --from=base /app/ /app/
 
+# Ensure writable permissions on storage and cache
+RUN chmod -R 775 /app/storage /app/bootstrap/cache
+
 # Expose the new port (2001)
 EXPOSE 2001
 
-# Start Apache and PHP-FPM
+# Start Apache
 CMD ["apache2-foreground"]

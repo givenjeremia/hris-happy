@@ -1,49 +1,61 @@
-# Base image for PHP with necessary extensions
-FROM php:8.2-fpm as base
+# Stage 1: PHP CLI with Composer for Laravel Setup
+FROM php:8.2-cli as base
 
-# Install necessary PHP extensions and tools
-RUN apt update && apt install -y \
-    tzdata git unzip libpq-dev libpng-dev libjpeg-dev libwebp-dev libfreetype6-dev \
-    libxpm-dev libgd-dev zlib1g-dev libzip-dev libmagickwand-dev && \
-    docker-php-ext-install bcmath pdo pdo_pgsql gd zip exif
+# Install dependencies
+RUN apt update && apt install -y tzdata git unzip libpq-dev libpng-dev libjpeg-dev libwebp-dev libfreetype6-dev libxpm-dev libgd-dev zlib1g-dev libzip-dev libmagickwand-dev && \
+    docker-php-ext-install bcmath pdo pdo_pgsql gd zip
 
 # Set timezone
 ENV TZ="Asia/Jakarta"
 
 # Set Composer environment variable
 ENV COMPOSER_ALLOW_SUPERUSER=1
+
+# Copy composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Set up application (Copy composer.json and lock files first)
+# Set working directory
 WORKDIR /app
+
+# Create Laravel project
+RUN composer create-project laravel/laravel:^10.0 --remove-vcs -n /app
+
+# Generate key and clear config
+RUN php /app/artisan key:generate && php /app/artisan config:clear
+
+# Copy necessary files
+COPY .env.example .env
 COPY composer.json composer.lock ./
 
 # Install composer dependencies
-RUN composer install --no-dev --optimize-autoloader -n
+RUN composer install
 
-# Copy the rest of the Laravel application files, including artisan
+# Copy application files
 COPY . .
 
-# Fix permissions for Laravel storage and cache
-RUN chown -R www-data:www-data /app /app/storage /app/bootstrap/cache
+# Stage 2: PHP with Apache
+FROM php:apache-bookworm
 
-# Clear Laravel cache
-RUN php artisan key:generate && php artisan config:cache && php artisan route:cache && php artisan view:cache
+# Install dependencies for Apache and PHP extensions
+RUN apt update && apt install -y git unzip libpq-dev && \
+    docker-php-ext-install bcmath pdo pdo_pgsql && \
+    a2enmod rewrite headers
 
-# Production stage: Laravel + Nginx
-FROM nginx:1.25 as production
+# Configure Apache to point to Laravel's public directory
+RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /app/public|' /etc/apache2/sites-enabled/000-default.conf
+RUN sed -i 's|*:80|*:8080|' /etc/apache2/sites-enabled/000-default.conf
+RUN sed -i 's|Listen 80|Listen 8080|' /etc/apache2/ports.conf
+RUN sed -i 's|<Directory /var/www/>|<Directory /app/>|' /etc/apache2/apache2.conf
+RUN sed -i 's|<Directory /var/www/>|<Directory /app/>|' /etc/apache2/conf-available/docker-php.conf
 
-# Install PHP-FPM
-RUN apt update && apt install -y php8.2-fpm
+# Copy PHP configuration file
+COPY php.ini-production /usr/local/etc/php/php.ini
 
-# Copy Nginx configuration
-COPY ./nginx.conf /etc/nginx/conf.d/default.conf
+# Copy application from the previous stage
+COPY --chown=www-data:www-data --from=base /app/ /app/
 
-# Copy the application from the base stage
-COPY --from=base /app /app
+# Expose the port for Apache
+EXPOSE 8080
 
-# Expose Nginx port
-EXPOSE 80
-
-# Start PHP-FPM and Nginx
-CMD service php8.2-fpm start && nginx -g "daemon off;"
+# Start Apache and PHP-FPM
+CMD ["apache2-foreground"]

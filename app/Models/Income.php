@@ -94,7 +94,7 @@ class Income extends Model
                 ->where('long_overtime', '>', 0)
                 ->whereMonth('date', Carbon::now()->month)
                 ->whereYear('date', Carbon::now()->year)
-                ->sum(DB::raw('CAST(long_overtime AS NUMERIC)'));;
+                ->sum(DB::raw('CAST(long_overtime AS DECIMAL(10,2))'));
 
         
             // Overtime

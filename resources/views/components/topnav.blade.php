@@ -86,6 +86,18 @@
 
           @endif
 
+          <li class="nav-item dropdown">
+            <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle {{ request()->is('*reports*') ? 'active navbar-active' : '' }}"><i class="nav-icon fas fa-book mr-1"></i>Report</a>
+            <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow p-2" style="left: 0px; right: inherit;">
+
+              <li><a href="{{ route('reports.presences') }}" class="dropdown-item {{ request()->is('*Presences reports*') ? 'active  navbar-active' : '' }}"> Presences Report</a></li>
+              <li><a href="{{ route('reports.overtime') }}" class="dropdown-item {{ request()->is('*Overtime reports*') ? 'active  navbar-active' : '' }}"> Overtime Report</a></li>
+              <li><a href="{{ route('reports.vacation') }}" class="dropdown-item {{ request()->is('*Vacation reports*') ? 'active  navbar-active' : '' }}"> Vacation Report</a></li>
+              <li><a href="{{ route('reports.income') }}" class="dropdown-item {{ request()->is('*Income reports*') ? 'active  navbar-active' : '' }}"> Income Report</a></li>
+
+            </ul>
+          </li>
+
 
 
 

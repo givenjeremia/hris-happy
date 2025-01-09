@@ -25,6 +25,7 @@ use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\VacationController;
 use App\Http\Controllers\AllowanceController;
 use App\Http\Controllers\DepartementController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 
 /*
@@ -133,7 +134,25 @@ Route::middleware(['web','auth'])->group(function(){
 
     Route::resource('income', IncomeController::class);
     Route::get('income-generate/generate-salary-all', [IncomeController::class, 'generateGajiAll'])->name('income.generate.salary'); 
+    Route::get('/generate-pdf/{incomeId}', [IncomeController::class, 'generatePayslipPDF'])->name('generate-pdf');
 
+    Route::prefix('reports')->group(function () {
+        Route::get('/presences', [ReportController::class, 'presenceReport'])->name('reports.presences');
+        Route::get('/presence/table', [ReportController::class, 'presenceTable'])->name('reports.presence.table');
+        Route::get('/presence/pdf', [ReportController::class, 'presenceGeneratePDF'])->name('reports.presence.pdf');
+
+        Route::get('/overtime', [ReportController::class, 'overtimeReport'])->name('reports.overtime');
+        Route::get('/overtime/table', [ReportController::class, 'overtimeTable'])->name('reports.overtime.table');
+        Route::get('/overtime/pdf', [ReportController::class, 'overtimeGeneratePDF'])->name('reports.overtime.pdf');
+
+
+        Route::get('/vacation', [ReportController::class, 'vacationReport'])->name('reports.vacation');
+        Route::get('/vacation/table', [ReportController::class, 'vacationTable'])->name('reports.vacation.table');
+        Route::get('/vacation/pdf', [ReportController::class, 'vacationGeneratePDF'])->name('reports.vacation.pdf');
+
+        Route::get('/income', [ReportController::class, 'incomeReport'])->name('reports.income');
+    });
+    
 
     Route::get('/reset-password', [ResetPasswordController::class, 'showResetForm'])->name('password.reset.form');
     Route::post('/reset-password-store', [ResetPasswordController::class, 'reset'])->name('password.update');

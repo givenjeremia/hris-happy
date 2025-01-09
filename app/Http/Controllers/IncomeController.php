@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Employee;
 use App\Models\Income;
+use App\Models\IncomeDetail;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
+use Dompdf\Dompdf;
 
 class IncomeController extends Controller
 {
@@ -139,6 +141,41 @@ class IncomeController extends Controller
             return response()->json(['status'=>'failed','msg' => 'Failed to generate salary', 'error' => $e->getMessage()], 500);
         }
     }
+
+    public function generatePayslipPDF($incomeId)
+    {
+        $income = Income::with(['employee', 'incomeDetail'])->findOrFail($incomeId);    
+        $data = [
+            'employeeName' => $income->employee->full_name,
+            'nominal' => number_format($income->nominal, 0, ',', '.'), 
+            'period' => $income->period,
+            'status' => $income->status,
+            'details' => $income->incomeDetail->map(function ($detail) {
+                return [
+                    'category' => $detail->category,
+                    'type' => $detail->type,
+                    'nominal' => number_format($detail->nominal, 0, ',', '.'), 
+                    'desc' => $detail->desc,
+                ];
+            })->toArray(),
+        ];
+    
+
+        $html = view('page/income/modal/slip-gaji', $data)->render();    
+        $options = new \Dompdf\Options();
+        $options->set('isRemoteEnabled', true); 
+        $dompdf = new \Dompdf\Dompdf($options);
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+    
+        return response($dompdf->output(), 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'inline; filename="Slip_Gaji.pdf"');
+    }
+    
+    
+    
 
 
 }

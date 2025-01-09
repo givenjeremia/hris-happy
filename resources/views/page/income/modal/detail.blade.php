@@ -74,7 +74,7 @@
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <a href="#" class="btn btn-secondary" data-dismiss="modal">Download Slip Gaji</a>
+                <a href="{{ route('generate-pdf', $income->id) }}" class="btn btn-secondary" target="_blank">Print Slip Gaji</a>
             </div>
         </div>
     </div>

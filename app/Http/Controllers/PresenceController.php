@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Overtime;
 use App\Models\Shift;
 use App\Models\Presence;
 use App\Models\Schedule;
@@ -280,6 +281,23 @@ class PresenceController extends Controller
 
             $presence->information =  $presence->information.' '.$informasi;
             $presence->save();
+
+            if ($presence->status == 'CLOCK_OUT'){
+                $out = $currentShift->time_out;
+                $now_time = Carbon::now();
+                if ($now_time->greaterThan($out)) {
+                    $selisih_menit = $now_time->diffInMinutes($out);
+
+                    // Add Overtime
+                    $overtime = new Overtime();
+                    $overtime->employee_id = $presence->employee_id;
+                    $overtime->date = $now_time;
+                    $overtime->long_overtime = $selisih_menit;
+                    $overtime->information = 'Pegawai '.$presence->employee->full_name.' Lembur Selama '.$selisih_menit.' Menit Terhitung Dari Waktu Time Out Shift '.$out;
+                    $overtime->save();
+    
+                }
+            }
 
             return response()->json(['status' => 'success', 'msg' => 'Success Presence Clock Out'], 200);
 

@@ -99,7 +99,7 @@ class Income extends Model
         
             // Overtime
             $overtime_rate = ((int)$basic_salary / 173);
-            $overtime_total = $overtime_rate * $count_overtime;
+            $overtime_total = ( $overtime_rate/60)  * $count_overtime;
         
             // BPJS
             $bpjs_amounts = [];

@@ -15,7 +15,7 @@
                         <input type="date" name="date" class="form-control" id="date-overtime" placeholder="YYYY-MM-DD" required>
                     </div>
                     <div class="form-group">
-                        <label>Long Overtime</label>
+                        <label>Long Overtime (Minutes)</label>
                         <input type="text" name="long_overtime" class="form-control" placeholder="Enter Long Overtime" required>
                     </div>
                     <div class="form-group">

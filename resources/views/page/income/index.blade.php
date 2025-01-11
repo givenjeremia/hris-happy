@@ -9,9 +9,12 @@
 <div class="card">
     <div class="card-header">
         <h3 class="card-title">Salary Data</h3>
-        <div class="card-tools">
-            <a href="#" onclick="generateGaji()" type="button" class="btn btn-primary">Generate Salary</a>
-        </div>
+        @if (auth()->user()->roles->pluck('name')[0] == 'admin')
+            <div class="card-tools">
+                <a href="#" onclick="generateGaji()" type="button" class="btn btn-primary">Generate Salary</a>
+            </div>
+        @endif
+       
     </div>
     <div class="card-body">
         <div class="table-responsive">

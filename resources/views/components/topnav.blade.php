@@ -76,15 +76,11 @@
             </ul>
           </li>
 
-          @if (auth()->user()->hasRole('admin'))
-
           <li class="nav-item">
             <a href="{{ route('income.index') }}" class="nav-link {{ request()->routeIs('income.index') ? 'active navbar-active' : '' }}">
               <i class="nav-icon fas fa-money-bill mr-1"></i>Income
             </a>
           </li>
-
-          @endif
 
           <li class="nav-item dropdown">
             <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle {{ request()->is('*reports*') ? 'active navbar-active' : '' }}"><i class="nav-icon fas fa-book mr-1"></i>Report</a>

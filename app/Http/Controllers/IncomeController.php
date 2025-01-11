@@ -31,7 +31,14 @@ class IncomeController extends Controller
 
     public function tableDataAdmin()
     {
-        $income = Income::orderBy('id','desc')->get();
+        $user = auth()->user();
+        if($user->getRoleNames()->first() == 'admin') {
+            $income = Income::orderBy('id','desc')->get();
+        }
+        else{
+            $income = Income::where('employee_id',$user->employee->id)->orderBy('id','desc')->get();
+        }
+
         $counter = 1;
         if (request()->ajax()) {
             $dataTable = Datatables::of($income)

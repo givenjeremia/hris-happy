@@ -41,7 +41,7 @@ class PosisionController extends Controller
                     return $item->salary;
                 })
                 ->addColumn('Action', function ($item)  {
-                    $encryptedIdString = "'" . $item->uuid . "'";
+                    $encryptedIdString = "'" . strval($item->uuid) . "'";
                     $button = 
                     '
                     <div class="dropdown">

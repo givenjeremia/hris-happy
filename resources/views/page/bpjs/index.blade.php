@@ -9,9 +9,6 @@
 <div class="card">
     <div class="card-header">
         <h3 class="card-title">BPJS Data</h3>
-        <div class="card-tools">
-            <a href="#" onclick="createData()" type="button" class="btn btn-primary">Create</a>
-        </div>
     </div>
     <div class="card-body">
         <div class="table-responsive">

@@ -54,7 +54,7 @@ class ClientController extends Controller
                             class="btn btn-secondary w-100">Action</a>
                         <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow" style="left: 0px; right: inherit;">
                             <li><a href="'.route('clients.edit',$item->uuid).'" class="dropdown-item">Ubah</a></li>
-                            <li><a href="#" onclick="deleteData(' . $encryptedIdString . ')"  class="dropdown-item">Hapus</a></li>
+                            <li><a href="#" onclick="deleteData(' .  $encryptedIdString . ')"  class="dropdown-item">Hapus</a></li>
                 
                         </ul>
                     </div>

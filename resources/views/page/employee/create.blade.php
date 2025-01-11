@@ -79,8 +79,8 @@
                 </div>
 
                 <div class="form-group required">
-                    <label for="exampleInputEmail1" class="control-label">Code PTKP</label>
-                    <input type="text" name="code_ptkp" class="form-control" id="exampleInputEmail1"
+                    <label for="exampleInputEmail1" class="control-label">Safety Equipment</label>
+                    <input type="text" name="safety_equipment" class="form-control" id="exampleInputEmail1"
                     placeholder="Write Data">
                 </div>
 

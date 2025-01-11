@@ -118,25 +118,39 @@ class Income extends Model
         
 
 
-            // Calculate Penalty
-            $penalty = 0;
-            foreach ($employee->schedule()->whereMonth('date', Carbon::now()->month)->get() as $schedule) {
-                $presence = $employee->presence()->where('date', $schedule->date)->first();
-                if (!$presence && !$vacationCollection->contains(function ($vacation) use ($schedule) {
-                    return $vacation->start_date <= $schedule->date && $vacation->end_date >= $schedule->date;
-                })) {
-                    $penalty += 7000;
-                }
-            }
+            // // Calculate Penalty
+            // $penalty = 0;
+            // foreach ($employee->schedule()->whereMonth('date', Carbon::now()->month)->get() as $schedule) {
+            //     $presence = $employee->presence()->where('date', $schedule->date)->first();
+            //     if (!$presence && !$vacationCollection->contains(function ($vacation) use ($schedule) {
+            //         return $vacation->start_date <= $schedule->date && $vacation->end_date >= $schedule->date;
+            //     })) {
+            //         $penalty += 7000;
+            //     }
+            // }
 
-            // Calculate late penlaty
-            $late_penalty = 0;
-            foreach ($employee->presence()->whereMonth('date', Carbon::now()->month)->get() as $presensi) {
-                if ($presensi->status === 'CLOCK_OUT' && $presensi->clock_in && $presensi->clock_in > $presensi->shift_start) {
-                    $late_minutes = $presensi->clock_in->diffInMinutes($presensi->shift_start);
-                    $late_penalty += floor($late_minutes / 30) * 5000;  // Denda 5000 per 30 mnt
+            // // Calculate late penlaty
+            // $late_penalty = 0;
+            // foreach ($employee->presence()->whereMonth('date', Carbon::now()->month)->get() as $presensi) {
+            //     if ($presensi->status === 'CLOCK_OUT' && $presensi->clock_in && $presensi->clock_in > $presensi->shift_start) {
+            //         $late_minutes = $presensi->clock_in->diffInMinutes($presensi->shift_start);
+            //         $late_penalty += floor($late_minutes / 30) * 5000;  // Denda 5000 per 30 mnt
+            //     }
+            // }
+
+
+            $penalty = 0;
+            $penalty_days = 0;
+            $daily_salary = $basic_salary / $count_schedule;
+
+            foreach ($employee->schedule()->whereMonth('date', Carbon::now()->month)->get() as $schedule){
+                $presence = $employee->presence()->where('date', $schedule->date)->first();
+                if (!$presence) {
+                    $penalty_days += 1;
                 }
+
             }
+            $penalty = $daily_salary * $penalty_days;
 
             // Potongan PPH21 IF(R3>=4500000;(R3-4500000)*5%;0)
             $pph21 = $ptkp >= 4500000 ? (int)$ptkp * 0.05 : 0;
@@ -146,7 +160,7 @@ class Income extends Model
             $profit = $allowance_total * 0.8;
 
             // Amout Salary Gaji pokok + BPJS + Safety + Profit - Potongan
-            $amout_salary = $basic_salary + $bpjs_total + $safety_equipment + $profit - ($penalty + $late_penalty + $pph21);
+            $amout_salary = $basic_salary + $bpjs_total + $safety_equipment + $profit - ($penalty + $pph21);
 
             ///////////////////////////////// Add In Database
             
@@ -189,7 +203,6 @@ class Income extends Model
 
             // //////////////////////////////// ADD OUT
             $out_detail = [
-                'Terlambat' => $late_penalty,
                 'Absensi' => $penalty,
                 'PPH21' => $pph21,
             ];

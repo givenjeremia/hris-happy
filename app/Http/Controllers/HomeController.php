@@ -36,8 +36,8 @@ class HomeController extends Controller
         else{
             $data_3_day_schedule = Schedule::where('employee_id', $user->employee->id)
                 ->where('date', '>=', Carbon::today())
-                ->where('date', '<=', Carbon::today()->addDays(3))
-                ->orderBy('date', 'asc')
+                ->where('date', '<=', Carbon::today()->addDays(4))
+                ->orderBy('date', 'desc')
                 ->get();
 
             return view('page.dashboard.employee',compact('data_3_day_schedule'));

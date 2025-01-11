@@ -24,7 +24,11 @@ class ResetPasswordController extends Controller
 
     public function showResetForm()
     {
-        return view('auth.passwords.reset'); // Nama file blade di resources/views/reset-password.blade.php
+        try {
+            return response()->json(array('status' => 'success', 'msg' => view('auth.passwords.modal.reset')->render()), 200);
+        } catch (\Throwable $th) {
+            return response()->json(array('status' => 'error', 'msg' =>$th->getMessage() ), 500);
+        }
     }
 
     public function reset(Request $request)

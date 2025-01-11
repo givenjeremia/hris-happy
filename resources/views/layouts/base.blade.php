@@ -218,6 +218,37 @@
     <script>
         const isAdmin = "{{ auth()->user()->hasRole('admin') ? 'true' : 'false' }}";
     </script>
+
+    <div id="modal-div"></div>
+
+    <script>
+        function updatePassword(){
+            let url = "{{ route('password.reset.form') }}"
+            $.ajax({
+                url: url,
+                method: "GET",
+                success: function(response) {
+                    $('#modal-div').html("");
+                    if (response.status == 'success') {
+                        $('#modal-div').html(response.msg);
+                    } else {
+                        Swal.fire({
+                            title: response.msg,
+                            icon: 'error',
+                            confirmButtonText: "Oke"
+                        })
+                    }
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire({
+                        title: 'Failed, Error Server',
+                        icon: 'error',
+                        confirmButtonText: "Oke"
+                    })
+                }
+            });
+        }
+    </script>
     @yield('scripts')
 </body>
 

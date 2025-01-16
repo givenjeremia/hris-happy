@@ -18,6 +18,10 @@ class Income extends Model
     public const STATUS_PAYMENT = 'PAYMENT';
     public const STATUS_CANCELED = 'CANCELED';
 
+    protected $fillable = [
+        'status',
+    ];
+
     protected static function boot()
     {
         parent::boot();

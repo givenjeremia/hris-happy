@@ -139,4 +139,33 @@
     }
 </script>
 
+<script>
+    function updateDataData(uuid){
+        let url = "{{ route('income.edit', ':uuid') }}".replace(':uuid', uuid)
+        $.ajax({
+            url: url,
+            method: "GET",
+            success: function(response) {
+                $('#modal-div').html("");
+                if (response.status == 'success') {
+                    $('#modal-div').html(response.msg);
+                } else {
+                    Swal.fire({
+                        title: response.msg,
+                        icon: 'error',
+                        confirmButtonText: "Oke"
+                    })
+                }
+            },
+            error: function(xhr, status, error) {
+                Swal.fire({
+                    title: 'Failed, Error Server',
+                    icon: 'error',
+                    confirmButtonText: "Oke"
+                })
+            }
+        });
+    }
+</script>
+
 @endsection

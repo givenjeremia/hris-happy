@@ -59,7 +59,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($income->incomeDetail as $item)
+                                @foreach ($income->incomeDetails as $item)
                                     <tr>
                                         <td>{{ $item->category }}</td>
                                         <td>{{ $item->type }}</td>

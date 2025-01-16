@@ -59,12 +59,20 @@ class IncomeController extends Controller
                 })
                 ->addColumn('Action', function ($item)  {
                     $encryptedIdString = "'" . $item->uuid . "'";
+                    $detail  =  '';
+
+                    $user = auth()->user();
+                    if($user->getRoleNames()->first() == 'admin') {
+                        $detail = '<li><a href="#" onclick="updateDataData(' . $encryptedIdString . ')"  class="dropdown-item">Update</a></li>';
+                    }
+            
                     $button = 
                     '
                     <div class="dropdown">
                         <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
                             class="btn btn-secondary w-100">Action</a>
                         <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow" style="left: 0px; right: inherit;">
+                            '.$detail.'
                             <li><a href="#" onclick="detailDataData(' . $encryptedIdString . ')"  class="dropdown-item">Detail</a></li>
                         </ul>
                     </div>
@@ -112,17 +120,41 @@ class IncomeController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Income $income)
+    public function edit($income)
     {
-        //
+        try {
+            $income = Income::firstWhere('uuid',$income);
+            return response()->json([
+                'status' => 'success', 
+                'msg' => view('page.income.modal.payment', compact('income'))->render()
+            ], 200);
+        } catch (\Throwable $e) {
+            return response()->json(['status' => 'error', 'msg' => $e->getMessage()], 500);
+        }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Income $income)
+    public function update(Request $request, $income)
     {
-        //
+        try {
+            $validator = Validator::make($request->all(), [
+                'status' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return response()->json(array('status' => 'error','msg' => 'Failed Update Income','err'=>'Check Input','valid'=>$validator->errors()), 200);
+            }
+            else{
+                $income = Income::firstWhere('uuid',$income);
+                $income = $income->fill($request->except('_token', '_method'));
+                $income->save();
+                return response()->json(array('status' => 'success','msg' => 'Success Update Income'), 201);
+
+            }
+        } catch (\Throwable $e) {
+            return response()->json(array('status' => 'error','msg' => 'Failed Update Income','err'=>$e->getMessage()), 500);
+        }
     }
 
     /**

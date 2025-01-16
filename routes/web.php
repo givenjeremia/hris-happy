@@ -42,29 +42,21 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 // Route::get('/', function () {
 //     return view('welcome');
 // });
+// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
 
 Auth::routes();
 
-// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
 Route::middleware(['web','auth'])->group(function(){
     Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-
     Route::get('/update-current-location', [App\Http\Controllers\HomeController::class, 'updateCurrentLocation'])->name('update.current.location');
-
-
 
     Route::prefix('master-data')->group(function () {
         Route::resource('clients', ClientController::class);
         Route::get('clients-table', [ClientController::class ,'tableDataAdmin'])->name('clients.table');
-    
-    
-    
+
         Route::resource('contracts', ContractController::class);
         Route::get('contracts-table', [ContractController::class ,'tableDataAdmin'])->name('contracts.table');
-    
-    
     
         Route::resource('departements', DepartementController::class);
         Route::get('departements-table', [DepartementController::class ,'tableDataAdmin'])->name('departements.table');
@@ -79,7 +71,6 @@ Route::middleware(['web','auth'])->group(function(){
         Route::get('shifts-table', [ShiftController::class ,'tableDataAdmin'])->name('shifts.table');
 
     });
-
 
 
     Route::prefix('personnel')->group(function () {
@@ -104,12 +95,6 @@ Route::middleware(['web','auth'])->group(function(){
 
             Route::put('/{vacation}/status', [VacationController::class, 'updateStatus'])->name('update.status');
         });
-
-       
-
-    
-
-
     });
 
      // Schedule 
@@ -136,6 +121,7 @@ Route::middleware(['web','auth'])->group(function(){
     Route::get('income-generate/generate-salary-all', [IncomeController::class, 'generateGajiAll'])->name('income.generate.salary'); 
     Route::get('/generate-pdf/{incomeId}', [IncomeController::class, 'generatePayslipPDF'])->name('generate-pdf');
 
+    //Report
     Route::prefix('reports')->group(function () {
         Route::get('/presences', [ReportController::class, 'presenceReport'])->name('reports.presences');
         Route::get('/presence/table', [ReportController::class, 'presenceTable'])->name('reports.presence.table');
@@ -151,12 +137,14 @@ Route::middleware(['web','auth'])->group(function(){
         Route::get('/vacation/pdf', [ReportController::class, 'vacationGeneratePDF'])->name('reports.vacation.pdf');
 
         Route::get('/income', [ReportController::class, 'incomeReport'])->name('reports.income');
+        Route::get('/income/table', [ReportController::class, 'incomeTable'])->name('reports.income.table');
+        Route::post('/income/pdf', [ReportController::class, 'incomeGeneratePDF'])->name('reports.income.pdf');
+        Route::post('/income_detail/pdf', [ReportController::class, 'incomeDetailGeneratePDF'])->name('reports.incomedetail.pdf');
+        
     });
     
-
+    //Reset Password
     Route::get('/reset-password', [ResetPasswordController::class, 'showResetForm'])->name('password.reset.form');
     Route::post('/reset-password-store', [ResetPasswordController::class, 'reset'])->name('password.update');
-
-
 });
 

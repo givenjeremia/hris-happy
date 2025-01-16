@@ -25,12 +25,12 @@
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label for="start_date">Start Date</label>
-                    <input type="date" name="start_date" id="start_date" class="form-control" value="{{ request('start_date') }}">
+                    <label for="startdatefilter">Start Date</label>
+                    <input type="date" name="startdatefilter" id="startdatefilter" class="form-control" value="{{ request('startdatefilter') }}">
                 </div>
                 <div class="col-md-3">
-                    <label for="end_date">End Date</label>
-                    <input type="date" name="end_date" id="end_date" class="form-control" value="{{ request('end_date') }}">
+                    <label for="enddatefilter">End Date</label>
+                    <input type="date" name="enddatefilter" id="enddatefilter" class="form-control" value="{{ request('enddatefilter') }}">
                 </div>
                 <div class="col-md-3 d-flex align-items-end">
                     <button type="submit" class="btn btn-primary w-100">Filter</button>
@@ -43,8 +43,8 @@
             <div class="col-md-3 align-self-end d-flex" style="gap: 10px;">
                 <form method="GET" action="{{ route('reports.vacation.pdf') }}" target="_blank" class="w-50">
                     <input type="hidden" name="employee_id" id="print-employee-id" value="{{ request('employee_id') }}">
-                    <input type="hidden" name="start_date" id="print-start-date" value="{{ request('start_date') }}">
-                    <input type="hidden" name="end_date" id="print-end-date" value="{{ request('end_date') }}">
+                    <input type="hidden" name="startdatefilter" id="print-startdatefilter" value="{{ request('startdatefilter') }}">
+                    <input type="hidden" name="enddatefilter" id="print-enddatefilter" value="{{ request('enddatefilter') }}">
                     <button type="submit" class="btn btn-app justify-content-center text-center">
                         <i class="fas fa-print me-2"></i> Print
                     </button>
@@ -81,14 +81,18 @@
                 url: "{{ route('reports.vacation.table') }}",
                 data: function(d) {
                     d.employee_id = $('#employee').val();
-                    d.start_date = $('#start_date').val();
-                    d.end_date = $('#end_date').val();
+                    d.startdatefilter = $('#startdatefilter').val();
+                    d.enddatefilter = $('#enddatefilter').val();
                 }
             },
             columns: [
                 { data: 'employee_name', name: 'employee_name', title: 'Employee Name' },
-                { data: 'start_date', name: 'start_date', title: 'Start Date' },
-                { data: 'end_date', name: 'end_date', title: 'End Date' },
+                { data: 'start_date', name: 'start_date', title: 'Start Date', render: function(data) {
+                    return moment(data).format('DD-MM-YYYY');
+                }},
+                { data: 'end_date', name: 'end_date', title: 'End Date', render: function(data) {
+                    return moment(data).format('DD-MM-YYYY');
+                }},
                 { data: 'subject', name: 'subject', title: 'Subject' },
                 { data: 'information', name: 'information', title: 'Information' },
                 { data: 'status', name: 'status', title: 'Status' },
@@ -98,6 +102,13 @@
         $('#filter-form').on('submit', function(e) {
             e.preventDefault();
             vacationTable.ajax.reload();
+        });
+
+        // Update hidden fields for print
+        $('#filter-form').on('input', function() {
+            $('#print-employee-id').val($('#employee').val());
+            $('#print-startdatefilter').val($('#startdatefilter').val());
+            $('#print-enddatefilter').val($('#enddatefilter').val());
         });
     });
 </script>

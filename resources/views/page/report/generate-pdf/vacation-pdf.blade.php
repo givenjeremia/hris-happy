@@ -5,41 +5,51 @@
     <style>
         body {
             font-family: 'Times New Roman', Times, serif;
-            margin: 10px;
+            margin: 20px;
+            color: #333;
         }
-        h1, h2, h3 {
+        h1, h2 {
             text-align: center;
+            margin: 0;
+            padding: 5px;
         }
         .report-header {
-            margin-bottom: 10px;
             text-align: center;
+            margin-bottom: 20px;
         }
         .report-header h2 {
             margin: 5px 0;
-            font-size: 18px;
+            font-size: 16px;
             color: #555;
         }
-        table {
-            border-collapse: collapse;
+        .table {
             width: 100%;
-            margin: 0;
+            border-collapse: collapse;
+            margin-bottom: 20px;
         }
-        table, th, td {
-            border: 1px solid black;
-        }
-        th, td {
-            padding: 8px;
-            text-align: left;
-            word-wrap: break-word;
+        .table thead th {
+            background-color: #4CAF50;
+            color: white;
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
             font-size: 13px;
         }
-        th {
-            background-color: #f2f2f2;
+        .table tbody td {
+            border: 1px solid #ddd;
+            padding: 10px;
             text-align: center;
+            font-size: 12px;
+        }
+        .table tbody td:first-child {
+            text-align: left; /* Nama karyawan rata kiri */
+        }
+        .table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
         }
         .footer {
+            margin-top: 40px;
             text-align: right;
-            margin-top: 20px;
             font-size: 12px;
             color: #777;
         }
@@ -48,10 +58,10 @@
 <body>
     <div class="report-header">
         <h1>Vacation Report</h1>
-        <h2>Period: {{ $start_date }} to {{ $end_date }}</h2>
+        <h2>Period: {{ $filterstartdate ?? 'N/A' }} to {{ $filterenddate ?? 'N/A' }}</h2>
     </div>
 
-    <table>
+    <table class="table">
         <thead>
             <tr>
                 <th>Employee Name</th>
@@ -65,21 +75,21 @@
             @forelse ($data as $vacation)
                 <tr>
                     <td>{{ $vacation->employee->full_name ?? '-' }}</td>
-                    <td>{{ $vacation->start_date }}</td>
-                    <td>{{ $vacation->end_date }}</td>
+                    <td>{{ \Carbon\Carbon::parse($vacation->start_date)->format('d-m-Y') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($vacation->end_date)->format('d-m-Y') }}</td>
                     <td>{{ $vacation->subject }}</td>
                     <td>{{ $vacation->status }}</td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="5" style="text-align: center;">No data available.</td>
+                    <td colspan="5" style="text-align: center; color: red;">No data available.</td>
                 </tr>
             @endforelse
         </tbody>
     </table>
 
     <div class="footer">
-        Printed on {{ now()->format('l, d F Y H:i') }}
+        Printed on {{ \Carbon\Carbon::now()->format('l, d F Y H:i') }}
     </div>
 </body>
 </html>

@@ -1,49 +1,65 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Presence Report</title>
     <style>
         body {
-            font-family: 'Times New Roman', Times, serif; 
-            margin: 10px;
+            font-family: 'Arial', sans-serif;
+            margin: 5px; /* Mengurangi margin untuk membuat tabel lebih lebar */
+            color: #333;
         }
         h1, h2, h3 {
             text-align: center;
+            margin: 0;
+            padding: 5px;
         }
         .report-header {
-            margin-bottom: 10px;
             text-align: center;
+            margin-bottom: 20px;
         }
         .report-header h2 {
-            margin: 5px 0;
-            font-size: 15px;
+            font-size: 16px;
             color: #555;
         }
-        table {
-            border-collapse: collapse;
+        .table {
             width: 100%;
-            margin: 0;
+            border-collapse: collapse;
+            margin-bottom: 20px;
         }
-        table, th, td {
-            border: 1px solid black;
+        .table thead th {
+            background-color: #4CAF50;
+            color: white;
+            border: 1px solid #ddd;
+            padding: 12px; /* Memperbesar padding untuk header tabel */
+            text-align: center;
+            font-size: 13px;
         }
-        th, td {
-            padding: 8px;
-            text-align: left;
-            word-wrap: break-word;
-            font-family: 'Times New Roman', Times, serif;
-            font-size: 14px;
+        .table tbody td {
+            border: 1px solid #ddd;
+            padding: 10px; /* Memperbesar padding untuk isi tabel */
+            text-align: center;
+            font-size: 12px;
         }
-        th {
-            background-color: #f2f2f2;
+        .table tbody td:first-child {
             text-align: center;
         }
-        tfoot td {
+        .table tbody td.name-column {
+            text-align: left;
+        }
+        .table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .table tfoot td {
+            border-top: 2px solid #4CAF50;
             font-weight: bold;
+            padding: 12px; /* Memperbesar padding untuk footer tabel */
+            text-align: center;
         }
         .statistics {
-            margin-top: 10px;
-            font-size: 14px;
+            margin-top: 20px;
+            font-size: 16px;
         }
         .statistics ul {
             list-style: none;
@@ -53,49 +69,47 @@
             margin-bottom: 5px;
         }
         .footer {
+            margin-top: 40px;
             text-align: right;
-            margin-top: 20px;
             font-size: 12px;
-            color: #777;
+            color: #666;
         }
     </style>
-    
-    
 </head>
 <body>
     <div class="report-header">
         <h1>Presence Report</h1>
-        <h2>Period: {{ $start_date }} to {{ $end_date }}</h2>
+        <h2>Period: {{ $start_date ?? 'N/A' }} to {{ $end_date ?? 'N/A' }}</h2>
     </div>
 
-    <table>
+    <table class="table">
         <thead>
             <tr>
-                <th>Employee Name</th>
+                <th>No.</th>
+                <th>Employee</th>
                 <th>Date</th>
                 <th>Time In</th>
-                <th>Area Cek In</th>
+                <th>Area In</th>
                 <th>Time Out</th>
-                <th>Area Cek Out</th>
+                <th>Area Out</th>
                 <th>Status</th>
-                {{-- <th>Description</th> --}}
             </tr>
         </thead>
         <tbody>
-            @forelse ($data as $presence)
+            @forelse ($data as $index => $presence)
                 <tr>
-                    <td>{{ $presence->employee->full_name }}</td>
-                    <td>{{ $presence->date }}</td>
-                    <td>{{ $presence->time_in }}</td>
-                    <td>{{ $presence->area_cek_in }} KM</td>
-                    <td>{{ $presence->time_out }}</td>
-                    <td>{{ $presence->area_cek_out }} KM</td>
+                    <td>{{ $index + 1 }}</td>
+                    <td class="name-column">{{ $presence->employee->full_name }}</td>
+                    <td>{{ \Carbon\Carbon::parse($presence->date)->format('d-m-Y') }}</td>
+                    <td>{{ $presence->time_in ?? '-' }}</td>
+                    <td>{{ $presence->area_cek_in ?? '-' }} KM</td>
+                    <td>{{ $presence->time_out ?? '-' }}</td>
+                    <td>{{ $presence->area_cek_out ?? '-' }} KM</td>
                     <td>{{ $presence->status }}</td>
-                    {{-- <td>{{ $presence->information }}</td> --}}
                 </tr>
             @empty
                 <tr>
-                    <td colspan="6" style="text-align: center;">No data available.</td>
+                    <td colspan="8" style="text-align: center; color: red;">No data available.</td>
                 </tr>
             @endforelse
         </tbody>
@@ -104,14 +118,18 @@
     <div class="statistics">
         <h3>Statistics</h3>
         <ul>
-            @foreach ($employee_statistics as $employee => $days_present)
-                <li>{{ $employee }} has been present for {{ $days_present }} days.</li>
-            @endforeach
+            @if ($employee_statistics && count($employee_statistics) > 0)
+                @foreach ($employee_statistics as $employee => $days_present)
+                    <li>{{ $employee }} has been present for <strong>{{ $days_present }}</strong> days.</li>
+                @endforeach
+            @else
+                <li style="color: red;">No statistics available.</li>
+            @endif
         </ul>
     </div>
 
     <div class="footer">
-        Printed on {{ now()->format('l, d F Y H:i') }}
+        Printed on {{ \Carbon\Carbon::now()->format('l, d F Y H:i') }}
     </div>
 </body>
 </html>

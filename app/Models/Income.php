@@ -32,7 +32,7 @@ class Income extends Model
 		return $this->belongsTo(Employee::class);
 	}
 
-    public function incomeDetail()
+    public function incomeDetails()
     {
         return $this->hasMany(IncomeDetail::class);
     }

@@ -107,21 +107,19 @@
                 </table>
             </div>
 
-            <!-- Page Break -->
             <div class="page-break"></div>
+
         @endforeach
     @else
         <p>No incomes available.</p>
     @endif
 
-    <!-- Summary (Optional if needed in the end of PDF) -->
     <div class="summary">
         <p style="color: green;"><strong>Total Income (Paid):</strong> Rp {{ number_format($totalPayment, 0, ',', '.') }}</p>
         <p style="color: red;"><strong>Total Income (Unpaid):</strong> Rp {{ number_format($totalNoPayment, 0, ',', '.') }}</p>
         <p><strong>Total Income:</strong> Rp {{ number_format($totalDetails, 0, ',', '.') }}</p>
     </div>
 
-    <!-- Footer -->
     <div class="footer">
         <p>Printed on: {{ \Carbon\Carbon::now()->format('d-m-Y') }}</p>
     </div>

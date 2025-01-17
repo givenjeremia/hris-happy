@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            margin: 5px; /* Mengurangi margin untuk membuat tabel lebih lebar */
+            margin: 5px; 
             color: #333;
         }
         h1, h2, h3 {
@@ -32,13 +32,13 @@
             background-color: #4CAF50;
             color: white;
             border: 1px solid #ddd;
-            padding: 12px; /* Memperbesar padding untuk header tabel */
+            padding: 12px;
             text-align: center;
             font-size: 13px;
         }
         .table tbody td {
             border: 1px solid #ddd;
-            padding: 10px; /* Memperbesar padding untuk isi tabel */
+            padding: 10px;
             text-align: center;
             font-size: 12px;
         }
@@ -54,7 +54,7 @@
         .table tfoot td {
             border-top: 2px solid #4CAF50;
             font-weight: bold;
-            padding: 12px; /* Memperbesar padding untuk footer tabel */
+            padding: 12px;
             text-align: center;
         }
         .statistics {

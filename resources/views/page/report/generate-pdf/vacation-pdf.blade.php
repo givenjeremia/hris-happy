@@ -42,7 +42,7 @@
             font-size: 12px;
         }
         .table tbody td:first-child {
-            text-align: left; /* Nama karyawan rata kiri */
+            text-align: left;
         }
         .table tbody tr:nth-child(even) {
             background-color: #f9f9f9;

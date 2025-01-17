@@ -5,8 +5,8 @@
     <style>
         body {
             font-family: 'Times New Roman', Times, serif;
-            margin: 20px; /* Memperbesar margin untuk tata letak lebih rapi */
-            color: #333; /* Warna teks lebih lembut */
+            margin: 20px;
+            color: #333; 
         }
         h1, h2, h3 {
             text-align: center;
@@ -28,7 +28,7 @@
             margin-bottom: 20px;
         }
         .table thead th {
-            background-color: #4CAF50; /* Warna hijau untuk header */
+            background-color: #4CAF50; 
             color: white;
             border: 1px solid #ddd;
             padding: 10px;
@@ -40,13 +40,13 @@
             text-align: center;
         }
         .table tbody td:first-child {
-            text-align: left; /* Nama karyawan rata kiri */
+            text-align: left; 
         }
         .table tbody tr:nth-child(even) {
-            background-color: #f9f9f9; /* Warna latar berbeda untuk baris genap */
+            background-color: #f9f9f9; 
         }
         .table tfoot td {
-            border-top: 2px solid #4CAF50; /* Garis pemisah untuk footer */
+            border-top: 2px solid #4CAF50; 
             font-weight: bold;
             padding: 10px;
             text-align: center;

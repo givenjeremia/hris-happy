@@ -212,9 +212,4 @@ class IncomeController extends Controller
             ->header('Content-Type', 'application/pdf')
             ->header('Content-Disposition', 'inline; filename="Slip_Gaji.pdf"');
     }
-    
-    
-    
-
-
 }

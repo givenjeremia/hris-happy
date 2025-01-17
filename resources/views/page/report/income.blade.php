@@ -54,7 +54,7 @@
     </div>
 </div>
 
-<!-- Print Modal -->
+<!-- Print Options Modal -->
 <div class="modal fade" id="printModal" tabindex="-1" role="dialog" aria-labelledby="printModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -93,7 +93,6 @@
 @section('scripts')
 <script>
 $(document).ready(function () {
-    // Initialize DataTable
     var datatable = $('#example1').DataTable({
         columnDefs: [{ defaultContent: "-", targets: "_all" }],
         processing: true,
@@ -114,31 +113,26 @@ $(document).ready(function () {
         ]
     });
 
-    // Filter Form Submission
     $('#filter-form').on('submit', function (e) {
         e.preventDefault();
         datatable.ajax.reload();
 
-        // Update hidden input fields in #printForm
         document.getElementById('print-employee-id').value = document.getElementById('employee').value;
         document.getElementById('print-start-date').value = document.getElementById('startdatefilter').value;
         document.getElementById('print-end-date').value = document.getElementById('enddatefilter').value;
     });
 
-    // Handle Print Button
     document.getElementById('printBtn').addEventListener('click', function () {
         const printForm = document.getElementById('printForm');
         const defaultPrint = document.getElementById('defaultPrint');
         const detailPrint = document.getElementById('detailPrint');
 
-        // Update the form action based on the selected option
         if (defaultPrint.checked) {
             printForm.action = "{{ route('reports.income.pdf') }}";
         } else if (detailPrint.checked) {
             printForm.action = "{{ route('reports.incomedetail.pdf') }}";
         }
 
-        // Submit the form
         printForm.submit();
     });
 });

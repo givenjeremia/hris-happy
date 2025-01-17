@@ -210,14 +210,14 @@ class ReportController extends Controller
 
     public function vacationReport(Request $request)
     {
-        $startDateFilter = $request->input('startdatefilter'); // Menggunakan nama yang konsisten
+        $startDateFilter = $request->input('startdatefilter'); 
         $endDateFilter = $request->input('enddatefilter');
         $employeeId = $request->input('employee_id');
     
-        // Query utama untuk data Vacation
+        // Query utama 
         $query = Vacation::with('employee');
     
-        // Filter berdasarkan tanggal
+        // Filter berdasarkan tanggal ato employee
         if ($startDateFilter) {
             $query->where('start_date', '>=', $startDateFilter);
         }
@@ -239,7 +239,6 @@ class ReportController extends Controller
         ]);
     }
 
-    // Vacation Table (For DataTables)
     public function vacationTable(Request $request)
     {
         $query = Vacation::query()->with('employee');
@@ -269,7 +268,6 @@ class ReportController extends Controller
         $endDateFilter = $request->input('enddatefilter');
         $employeeId = $request->input('employee_id');
 
-        // Query utama untuk data Vacation
         $query = Vacation::with('employee');
         if ($employeeId) {
             $query->where('employee_id', $employeeId);
@@ -283,11 +281,9 @@ class ReportController extends Controller
 
         $data = $query->get();
 
-        // Format tanggal untuk tampilan
         $filterstartdate = $startDateFilter ? Carbon::parse($startDateFilter)->format('d F Y') : '[Not Set]';
         $filterenddate = $endDateFilter ? Carbon::parse($endDateFilter)->format('d F Y') : '[Not Set]';
 
-        // Generate PDF
         $html = view('page/report/generate-pdf.vacation-pdf', compact('data', 'filterstartdate', 'filterenddate'))->render();
 
         $options = new Options();
@@ -302,9 +298,9 @@ class ReportController extends Controller
 
     public function incomeReport(Request $request)
     {
-        $startDate = $request->input('start_date', null); // Default ke null jika tidak ada input
-        $endDate = $request->input('end_date', null); // Default ke null jika tidak ada input
-        $employeeId = $request->input('employee_id', null); // Default ke null jika tidak ada input
+        $startDate = $request->input('start_date', null); 
+        $endDate = $request->input('end_date', null); 
+        $employeeId = $request->input('employee_id', null); 
     
         $query = Income::with('employee');
     
@@ -326,9 +322,9 @@ class ReportController extends Controller
         return view('page/report.income', [
             'data' => $data,
             'employees' => $employees,
-            'startDate' => $startDate, // Pastikan variabel ini dikirim ke view
-            'endDate' => $endDate, // Pastikan variabel ini dikirim ke view
-            'employee_id' => $employeeId, // Pastikan variabel ini juga dikirim ke view
+            'startDate' => $startDate,
+            'endDate' => $endDate, 
+            'employee_id' => $employeeId, 
         ]);
     }
     
@@ -366,7 +362,7 @@ class ReportController extends Controller
         $startDate = $request->input('startdatefilter', null);
         $endDate = $request->input('enddatefilter', null);
         $employeeId = $request->input('employee_id', null);
-        // Query untuk mengambil data dari tabel Income
+
         $query = Income::with('employee');
     
         if ($request->employee_id) {
@@ -381,20 +377,16 @@ class ReportController extends Controller
             $query->where('period', '<=', $request->enddatefilter);
         }
     
-        // Ambil data hasil query
         $data = $query->get();
-        // Summary data
         $totalNoPayment = 0;
         $totalPayment = 0;
         $totalNominal = 0;
     
-        // Format tanggal untuk tampilan di PDF
         $start_date = $request->startdatefilter ? Carbon::parse($request->startdatefilter)->format('d F Y') : '[Not Set]';
         $end_date = $request->enddatefilter ? Carbon::parse($request->enddatefilter)->format('d F Y') : '[Not Set]';
     
-        // Generate PDF
         $view = view('page.report.generate-pdf.income-pdf', [
-            'data' => $data, // Kirimkan $data ke view
+            'data' => $data,
             'start_date' => $start_date,
             'end_date' => $end_date,
             'totalNominal' => $totalNominal,
@@ -402,7 +394,7 @@ class ReportController extends Controller
             'totalNoPayment' => $totalNoPayment,
         ])->render();
     
-        // Gunakan Dompdf untuk membuat PDF
+
         $options = new \Dompdf\Options();
         $options->set('isRemoteEnabled', true);
         $dompdf = new \Dompdf\Dompdf($options);
@@ -410,7 +402,6 @@ class ReportController extends Controller
         $dompdf->setPaper('F4', 'portrait');
         $dompdf->render();
     
-        // Kembalikan file PDF sebagai respon
         return $dompdf->stream('Income_Report.pdf', ['Attachment' => false]);
     }
     
@@ -421,7 +412,6 @@ class ReportController extends Controller
         $endDate = $request->input('enddatefilter', null);
         $employeeId = $request->input('employee_id', null);
 
-        // Query utama untuk tabel incomes
         $query = Income::with('employee', 'incomeDetails');
 
         if ($startDate) {
@@ -436,35 +426,29 @@ class ReportController extends Controller
             $query->where('employee_id', $employeeId);
         }
 
-        // Ambil data incomes
-        $incomes = $query->get() ?? collect(); // Jika null, inisialisasi sebagai koleksi kosong
+        $incomes = $query->get() ?? collect();
 
-        // Summary data
         $totalNoPayment = 0;
         $totalPayment = 0;
         $totalDetails = 0;
         $incomeDetails = [];
 
         foreach ($incomes as $income) {
-            // Hitung total berdasarkan status
             if ($income->status === 'NO_PAYMENT') {
                 $totalNoPayment += $income->nominal;
             } elseif ($income->status === 'PAYMENT') {
                 $totalPayment += $income->nominal;
             }
 
-            // Ambil income details
             foreach ($income->incomeDetails as $detail) {
                 $incomeDetails[] = $detail;
                 $totalDetails += $detail->nominal;
             }
         }
 
-        // Format tanggal awal dan akhir
         $startDate = $startDate ? \Carbon\Carbon::parse($startDate)->format('d-m-Y') : 'N/A';
         $endDate = $endDate ? \Carbon\Carbon::parse($endDate)->format('d-m-Y') : 'N/A';
 
-        // Generate PDF
         $view = view('page.report.generate-pdf.income-detail-pdf', [
             'incomes' => $incomes,
             'incomeDetails' => $incomeDetails,

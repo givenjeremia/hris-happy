@@ -48,7 +48,7 @@ class ScheduleController extends Controller
                     return $item->employee->full_name;
                 })
                 ->addColumn('Shift', function ($item) {
-                    return $item->shift->name;
+                    return $item->shift ? $item->shift->name : 'Tidak Di Temukan';
                 })
                 ->addColumn('Date', function ($item) {
                     return Carbon::parse($item->date)->translatedFormat('d F Y');

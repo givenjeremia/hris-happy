@@ -120,27 +120,30 @@ class HomeController extends Controller
                         ->orderBy('created_at', 'desc')
                         ->first();
                 }
-                } else {
+                } 
+                else {
                 // Jika hanya ada 1 jadwal, ambil presensi
                 $presense = Presence::where('employee_id', $user->employee->id)
                     ->whereDate('date', Carbon::today())
-                    ->where('status', '<>', 'CLOCK_OUT') // Pastikan bukan presensi yang sudah Clock Out
+                    // ->where('status', '<>', 'CLOCK_OUT') // Pastikan bukan presensi yang sudah Clock Out
                     ->first();
                 }
 
                 // Jika semua presensi sudah Clock Out, maka set presense ke null
-                if ($presense && $presense->status === 'CLOCK_OUT') {
-                $presense = null;
-                }
+                // if ($presense && $presense->status === 'CLOCK_OUT') {
+                // $presense = null;
+                // }
 
                 // Cek jika semua presensi hari ini sudah Clock Out
                 $allClockedOut = Presence::where('employee_id', $user->employee->id)
                 ->whereDate('date', Carbon::today())
                 ->count() > 0 && Presence::where('employee_id', $user->employee->id)
                 ->whereDate('date', Carbon::today())
-                ->where('status', '<>', 'CLOCK_OUT')
+                // ->where('status', '<>', 'CLOCK_OUT')
                 ->count() === 0;
 
+   
+                // dd($presense);
 
                 $render_button = view('page.dashboard.button_absen',compact('presense','allClockedOut'))->render();
                 $data .= ' Anda Dalam Jangkauan '.$distance.' KM';

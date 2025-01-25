@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
 use App\Models\Overtime;
 use App\Models\Shift;
 use App\Models\Presence;
@@ -20,7 +21,14 @@ class PresenceController extends Controller
     public function index()
     {
         try {
-            return view('page.presence.index');
+            $user = Auth::user();
+            if($user->getRoleNames()->first() == 'admin') {
+                return view('page.presence.admin.index');
+            }
+            else{
+                return view('page.presence.index');
+            }
+            
         } catch (\Throwable $e) {
             # code...
         }
@@ -71,6 +79,94 @@ class PresenceController extends Controller
                 ->addColumn('Information', function ($item) {
                     return $item->information;
                 })->rawColumns(['No','Employee','Date','Lat In','Long In','Time In', 'Lat Out','Long Out','Time Out','Status','Information']);
+               
+            return $dataTable->make(true);
+        }
+    }
+
+    public function tablePegawaiAbsen()
+    {
+        $user = Auth::user();
+        $data_day_now_schedule = Schedule::where('date', '>=', Carbon::today())
+            ->where('date', '<=', Carbon::today()->addDays(4))
+            ->orderBy('date', 'desc')
+            ->get();
+        $counter = 1;
+        if (request()->ajax()) {
+            $dataTable = Datatables::of($data_day_now_schedule)
+                ->addColumn('No', function () use (&$counter) {
+                    return $counter++;
+                })
+                ->addColumn('Employee', function ($item) {
+                    return $item->employee->full_name;
+                })
+                ->addColumn('Date', function ($item) {
+                    return Carbon::parse($item->date)->translatedFormat('d F Y');
+                })
+                ->addColumn('Shift', function ($item) {
+                    return $item->shift->name;
+                })
+                ->addColumn('Time In', function ($item) {
+                    return $item->shift->time_in;
+                })
+                ->addColumn('Time Out', function ($item) {
+                    return  $item->shift->time_out;
+                })
+                ->addColumn('Status Absen', function ($item) {
+                    $status_in = '-';
+                    $status_out = '-';
+                    $presence =  Presence::where('employee_id', $item->employee->id)
+                    ->whereDate('date', Carbon::today())->first();
+
+                    if($presence){
+                        $status = $presence->status;
+                        if($status == 'CLOCK_IN'){
+                            $status_in = 'Sudah';
+                            $status_out = '-';
+                        }
+                        if($status == 'CLOCK_OUT'){
+                            $status_in = 'Sudah';
+                            $status_out = 'Sudah';
+                        }
+                    }
+
+                    return '<ul class="m-0 px-3">
+                        <li>IN : '.$status_in.'</li>
+                        <li>OUT : '.$status_out.'</li>
+                    </ul>';
+                })
+                ->addColumn('Action', function ($item) {
+                    $encryptedIdString = "'" .  $item->employee->uuid. "'";
+                    $status_in = '';
+                    $status_out = '';
+                    $presence =  Presence::where('employee_id', $item->employee->id)
+                    ->whereDate('date', Carbon::today())->first();
+
+                    if($presence){
+                        $status = $presence->status;
+                        if($status == 'CLOCK_IN'){
+                            $status_out =  '<li><a href="#" onclick="updateAbsen(' . $encryptedIdString . ','. "'Clock Out Pegawai'".')"  class="dropdown-item">CLOCK OUT</a></li>';
+                        }
+                    }
+                    else{
+                        $status_in = '<li><a href="#" onclick="updateAbsen(' . $encryptedIdString . ','. "'Clock In Pegawai'".')"  class="dropdown-item">CLOCK IN</a></li>';
+                    }
+                    $button = 
+                    '
+                    <div class="dropdown">
+                        <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                            class="btn btn-secondary w-100">Action</a>
+                        <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow" style="left: 0px; right: inherit;">
+                            
+                            '.$status_in.'
+                            '.$status_out.'
+                        </ul>
+                    </div>
+                    ';
+                    // return  $button;
+                    return $presence ? ( $presence->status == 'CLOCK_OUT' ? '-' : $button ) : $button;
+                })
+                ->rawColumns(['No','Employee','Date','Shift','Time In','Time Out','Status Absen','Action']);
                
             return $dataTable->make(true);
         }
@@ -317,6 +413,45 @@ class PresenceController extends Controller
             return response()->json(['status' => 'success', 'msg' => 'Success Delete Presence'], 200);
         } catch (\Throwable $e) {
             return response()->json(['status' => 'error', 'msg' => 'Success Delete Presence', 'err' => $e->getMessage()], 500);
+        }
+    }
+
+
+    public function updateAbsensiPegawaiAdmin(Request $request, $employee)
+    {
+        try {
+            // Set Before
+            $date_now = Carbon::now()->format('Y-m-d'); 
+            $time_now = Carbon::now();
+            // Get Employee
+            $employee = Employee::with('client','presence','schedule')->where('uuid',$employee)->first();
+            $presence_today = $employee->presence()->whereDate('date',  $time_now)->first();
+
+            // Jika Belum Presense Today Lakukan Clock IN Jika Sudah Lakukan Check Out
+            if(!$presence_today){
+              
+                $presence = new Presence();
+                $presence->employee_id = $employee->id;
+                $presence->latitude_in = $employee->client->latitude;
+                $presence->longitude_in = $employee->client->longitude;
+                $presence->office = $employee->client->uuid;
+                $presence->time_in = $time_now; 
+                $presence->time_out = '00:00:00';
+                $presence->date = $date_now;
+                $presence->status = 'CLOCK_IN';
+                $presence->save();
+            }
+            else{
+                $presence_today->status = 'CLOCK_OUT';
+                $presence_today->time_out =  $time_now;
+                $presence_today->latitude_out = $employee->client->latitude;
+                $presence_today->longitude_out = $employee->client->longitude;
+                $presence_today->save();
+            }
+
+            return response()->json(['status' => 'success', 'msg' => 'Success Update Presence'], 200);
+        } catch (\Throwable $e) {
+            return response()->json(['status' => 'error', 'msg' => 'Gagal Update Presensi', 'err' => $e->getMessage()], 500);
         }
     }
 }

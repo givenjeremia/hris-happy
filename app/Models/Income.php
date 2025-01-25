@@ -90,8 +90,14 @@ class Income extends Model
             foreach ($allowance_all as $key => $value) {
                 $allowance[$value->name]['nominal'] = $value->nominal;
                 $allowance[$value->name]['amount'] = $value->nominal * $count_schedule;
+                $allowance[$value->name]['detail'] = '<ul class="p-0">
+                    <li>Nominal : Rp. '.number_format($value->nominal, 0, ",", ".").'</li>
+                    <li>Total Jadwal : '.$count_schedule.'</li>
+                </ul> ';
+                
                 $allowance_total += $value->nominal * $count_schedule;
             }
+    
         
             // Calculate Overtime
             $count_overtime = $employee->overtime()
@@ -104,14 +110,22 @@ class Income extends Model
             // Overtime
             $overtime_rate = ((int)$basic_salary / 173);
             $overtime_total = ( $overtime_rate/60)  * $count_overtime;
+            $overtime_detail = '<ul class="p-0">
+                <li>Gaji Dasar Perhari : Rp. '.number_format($overtime_rate, 0, ",", ".").'</li>
+                <li>Lama Lembur Per Menit : '.$count_overtime.'</li>
+            </ul> ';
         
             // BPJS
             $bpjs_amounts = [];
             $bpjs_total = 0; // Total BPJS
             $bpjs_all = Bpjs::all();
             foreach ($bpjs_all as $item) {
-                $bpjs_amounts[$item->type] = $basic_salary * ($item->nominal/100);
-                $bpjs_total += $bpjs_amounts[$item->type]; 
+                $bpjs_amounts[$item->type]['total'] = $basic_salary * ($item->nominal/100);
+                $bpjs_amounts[$item->type]['detail']= '<ul class="p-0">
+                    <li>Gaji Perhari : Rp. '.number_format($overtime_rate, 0, ",", ".").'</li>
+                    <li>BPJS : '.($item->nominal/100).'</li>
+                </ul> ';
+                $bpjs_total += $bpjs_amounts[$item->type]['total']; 
             }
         
             // Calculate PTKP (Allowances + Overtime + BPJS)
@@ -155,13 +169,27 @@ class Income extends Model
 
             }
             $penalty = $daily_salary * $penalty_days;
+            $penalty_detail = '<ul class="p-0">
+                <li>Gaji Dasar Perhari : Rp. '.number_format($daily_salary, 0, ",", ".").'</li>
+                <li>Ketidakhadiran : '.$penalty_days.'</li>
+            </ul> ';;
 
             // Potongan PPH21 IF(R3>=4500000;(R3-4500000)*5%;0)
             $pph21 = $ptkp >= 4500000 ? (int)$ptkp * 0.05 : 0;
+            $pph21_detail = '
+            <p>Terhitung Jika Total PTKP Lebih Dari Rp. 4.500.000 Jika Tidak Akan Bernilai 0</p>
+            <ul class="p-0">
+                <li>PTKP (Total Tunjangan + Total Lembur + Total BPJS) : Rp. '.number_format($ptkp, 0, ",", ".").'</li>
+                <li>Persen : 5%</li>
+            </ul> ';;
 
 
             // Profit = Total Tunjangan * 4,5%
             $profit = $allowance_total * 0.8;
+            $profit_detail = '<ul class="p-0">
+                <li>Total Tunjangan : Rp. '.number_format($allowance_total, 0, ",", ".").'</li>
+                <li>Persen : 4,5%</li>
+            </ul> ';
 
             // Amout Salary Gaji pokok + BPJS + Safety + Profit - Potongan
             $amout_salary = $basic_salary + $bpjs_total + $safety_equipment + $profit - ($penalty + $pph21);
@@ -179,27 +207,43 @@ class Income extends Model
 
             // Add In Detail
             // //////////////////////////////// ADD IN
+
+            // - lembur : total jam lembur karyawan berapa dan nominal upah per jam nya brapa
+	        // - tunjangan : total hari dia mendapatkan tiap tunjangan dan nominal tunjangannya (makan dan transportasi)
+	        // - potongan absensi : tidak masuk berapa hari dan nominal potongan per hari nya brapa
+	        // - pph21 : ptkp yang didapatkan berapa Dibuat seperti dropdown atau sub menu, jadi ketika kategori gaji nya di klik muncul detail per kategorinya (lembur, tunjangan, potongan absensi, dan pph21)
+
             $in_detail = [
-                'Gaji Pokok' => $basic_salary,
-                'Profit' => $profit,
-                'Lembur' => $overtime_total,
+                'Gaji Pokok' => [
+                    $basic_salary,'-'
+                ],
+                'Profit' => [
+                    $profit,$profit_detail
+                ],
+                'Lembur' => [
+                    $overtime_total,$overtime_detail 
+                ],
             ];
             // Add Allowances to in_detail
-            foreach ($allowance as $name => $details) {         
-                $in_detail['Tunjangan '.$name] = $details['amount'];
+            foreach ($allowance as $name => $details) {      
+                $in_detail['Tunjangan '.$name] = [
+                    $details['amount'],$details['detail']
+                ];
             }
 
             // Add Allowances to in_detail
             foreach ($bpjs_amounts as $type => $amount) {
-                $in_detail['BPJS ' . $type] = $amount;
+                $in_detail['BPJS ' . $type] = [
+                    $amount['total'],$amount['detail']
+                ];
             }
 
             foreach ($in_detail as $key => $value) {
                 $new_detail_income = new IncomeDetail();
                 $new_detail_income->uuid = Str::uuid();
                 $new_detail_income->type = 'IN';
-                $new_detail_income->desc = '-';
-                $new_detail_income->nominal = $value;
+                $new_detail_income->desc = $value[1];
+                $new_detail_income->nominal = $value[0];
                 $new_detail_income->category = $key;
                 $new_detail_income->income_id = $new_income->id;
                 $new_detail_income->save();
@@ -207,17 +251,21 @@ class Income extends Model
 
             // //////////////////////////////// ADD OUT
             $out_detail = [
-                'Absensi' => $penalty,
-                'PPH21' => $pph21,
+                'Absensi' => [
+                    $penalty, $penalty_detail
+                ],
+                'PPH21' => [
+                    $pph21,$pph21_detail
+                ],
             ];
 
             foreach ($out_detail as $key => $value) {
                 $new_detail_income = new IncomeDetail();
                 $new_detail_income->uuid = Str::uuid();
                 $new_detail_income->type = 'OUT';
-                $new_detail_income->desc = '-';
+                $new_detail_income->desc = $value[1];
 
-                $new_detail_income->nominal = $value;
+                $new_detail_income->nominal = $value[0];
                 $new_detail_income->category = $key;
                 $new_detail_income->income_id = $new_income->id;
                 $new_detail_income->save();

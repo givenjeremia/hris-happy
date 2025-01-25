@@ -1,5 +1,5 @@
 <div class="modal fade" id="modal-detail-gaji">
-    <div class="modal-dialog modal-lg " style="border-radius: 20px;">
+    <div class="modal-dialog   modal-xl" style="border-radius: 20px;">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Detail Gaji</h4>
@@ -64,7 +64,7 @@
                                         <td>{{ $item->category }}</td>
                                         <td>{{ $item->type }}</td>
                                         <td>Rp. {{ number_format($item->nominal, 0, ',', '.')  }}</td>
-                                        <td>{{ $item->desc }}</td>
+                                        <td>{!! $item->desc !!}</td>
                                     </tr>
                                 @endforeach
                             </tbody>

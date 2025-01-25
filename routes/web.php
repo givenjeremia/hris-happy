@@ -82,6 +82,9 @@ Route::middleware(['web','auth'])->group(function(){
         
         Route::resource('presences', PresenceController::class);
         Route::get('presences-table', [PresenceController::class,'table'])->name('presences.table');
+        Route::get('presences-table-pegawai-absen', [PresenceController::class,'tablePegawaiAbsen'])->name('presences.table.pegawai.absen');
+        Route::post('presences-absen-admin/{employee}', [PresenceController::class, 'updateAbsensiPegawaiAdmin'])->name('presences.pegawai.absen.post'); 
+
 
         // Vacation
         Route::prefix('vacations')->name('vacations.')->group(function () {

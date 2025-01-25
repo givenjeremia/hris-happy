@@ -12,7 +12,7 @@
             <button 
                 class="btn btn-outline-danger btn-block" 
                 onclick="handlePresence('check-out')" 
-                {{ $allClockedOut ? 'disabled' : (!$presense ? 'disabled' : '') }}>
+                {{ $allClockedOut ? 'disabled' : (!$presense ? 'disabled' : ($presense->status == 'CLOCK_OUT' ? 'enable' : 'disabled')) }}  >
                 <i class="fas fa-sign-out-alt"></i> Check Out
             </button>
         </div>

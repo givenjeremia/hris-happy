@@ -183,13 +183,13 @@ class IncomeController extends Controller
 
     public function generatePayslipPDF($incomeId)
     {
-        $income = Income::with(['employee', 'incomeDetail'])->findOrFail($incomeId);    
+        $income = Income::with(['employee', 'incomeDetails'])->findOrFail($incomeId);    
         $data = [
             'employeeName' => $income->employee->full_name,
             'nominal' => number_format($income->nominal, 0, ',', '.'), 
             'period' => $income->period,
             'status' => $income->status,
-            'details' => $income->incomeDetail->map(function ($detail) {
+            'details' => $income->incomeDetails->map(function ($detail) {
                 return [
                     'category' => $detail->category,
                     'type' => $detail->type,
